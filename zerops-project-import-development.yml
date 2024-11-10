@@ -11,6 +11,11 @@ services:
     mode: NON_HA
     priority: 100
 
+  - hostname: search
+    type: meilisearch@1.10
+    mode: NON_HA
+    priority: 100
+
   - hostname: redis
     type: valkey@7.2
     mode: NON_HA
@@ -21,7 +26,7 @@ services:
     objectStorageSize: 2
     objectStoragePolicy: public-read
     priority: 100
-    
+
   - hostname: imgproxy
     type: 22.04
     buildFromGit: https://github.com/zeropsio/recipe-imgproxy
@@ -29,7 +34,8 @@ services:
     envSecrets:
       IMGPROXY_KEY: <@generateRandomString(<32>) | toHex>
       IMGPROXY_SALT: <@generateRandomString(<32>) | toHex>
-      IMGPROXY_ALLOWED_SOURCES: ${storage_apiUrl}/${storage_bucketName}/    
+      IMGPROXY_ALLOWED_SOURCES: ${storage_apiUrl}/${storage_bucketName}/
+    priority: 100
 
   - hostname: medusa
     type: nodejs@22
@@ -52,7 +58,5 @@ services:
     verticalAutoscaling:
       minRam: 0.5
 
-  - hostname: search
-    type: meilisearch@1.10
-    mode: NON_HA
-      
+
+

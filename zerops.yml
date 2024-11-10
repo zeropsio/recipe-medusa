@@ -32,6 +32,8 @@ zerops:
         REDIS_URL: redis://${redis_hostname}:6379
         CACHE_REDIS_URL: redis://${redis_hostname}:6379
         EVENTS_REDIS_URL: redis://${redis_hostname}:6379
+        MEILISEARCH_HOST: ${search_hostname}:${search_port}
+        MEILISEARCH_API_KEY: ${search_masterKey}
       initCommands:
         - |
           PUBLISHABLE_KEY=$(npx medusa exec ./src/scripts/output-publishable-key.js | grep -o "<PK_TOKEN>.*</PK_TOKEN>" | sed 's/<PK_TOKEN>//;s/<\/PK_TOKEN>//')
