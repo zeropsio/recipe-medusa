@@ -1,0 +1,43 @@
+#yamlPreprocessor=on
+project:
+  name: recipe-medusa
+  tags:
+    - zerops-recipe
+
+services:
+  - hostname: db
+    type: postgresql@16
+    mode: NON_HA
+    priority: 100
+
+  - hostname: storage
+    type: object-storage
+    objectStorageSize: 2
+    objectStoragePolicy: public-read
+    priority: 100
+
+  - hostname: redis
+    type: valkey@7.2
+    mode: NON_HA
+    priority: 100
+
+  - hostname: medusa
+    type: nodejs@22
+    buildFromGit: https://github.com/zeropsio/recipe-medusa
+    enableSubdomainAccess: true
+    envSecrets:
+      ADMIN_CORS: ${zeropsSubdomain}
+      COOKIE_SECRET: <@generateRandomString(<32>)>
+      JWT_SECRET: <@generateRandomString(<32>)>
+      SUPERADMIN_PASSWORD: <@generateRandomString(<16>)>
+    verticalAutoscaling:
+      minRam: 0.5
+    priority: 90
+
+  - hostname: storefront
+    type: nodejs@22
+    buildFromGit: https://github.com/zeropsio/recipe-medusa-storefront
+    envSecrets:
+      REVALIDATE_SECRET: <@generateRandomString(<16>)>
+    verticalAutoscaling:
+      minRam: 0.5
