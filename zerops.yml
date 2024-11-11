@@ -35,11 +35,11 @@ zerops:
         MEILISEARCH_HOST: ${search_hostname}:${search_port}
         MEILISEARCH_API_KEY: ${search_masterKey}
       initCommands:
-        - npx medusa exec ./src/scripts/output-publishable-key.js | grep -o "<PK_TOKEN>.*</PK_TOKEN>" | sed 's/<PK_TOKEN>//;s/<\/PK_TOKEN>//' | zsc editSecret CHANNEL_PUBLISHABLE_KEY
         - zsc execOnce ${appVersionId}_migration npx medusa db:migrate
         - zsc execOnce ${appVersionId}_links npx medusa db:sync-links
         - zsc execOnce -r initialData yarn seed
         - zsc execOnce -r initialAdmin -- npx medusa user -e admin@email.com -p $SUPERADMIN_PASSWORD
+        - npx medusa exec ./src/scripts/output-publishable-key.js | grep -o "<PK_TOKEN>.*</PK_TOKEN>" | sed 's/<PK_TOKEN>//;s/<\/PK_TOKEN>//' | zsc editSecret CHANNEL_PUBLISHABLE_KEY
       ports:
         - port: 9000
           httpSupport: true
