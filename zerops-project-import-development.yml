@@ -59,6 +59,7 @@ services:
   - hostname: storefront
     type: nodejs@22
     buildFromGit: https://github.com/zeropsio/recipe-medusa-storefront
+    enableSubdomainAccess: true
     envSecrets:
       REVALIDATE_SECRET: <@generateRandomString(<16>)>
     verticalAutoscaling:
