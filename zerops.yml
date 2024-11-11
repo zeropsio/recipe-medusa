@@ -12,11 +12,11 @@ zerops:
         - tsconfig.json
         - node_modules
         - ./src/links
-    # deploy:
-    #   readinessCheck:
-    #     httpGet:
-    #       port: 9000
-    #       path: /health
+    deploy:
+      readinessCheck:
+        httpGet:
+          port: 9000
+          path: /health
     run:
       base: nodejs@22
       envVariables:
@@ -46,7 +46,7 @@ zerops:
         - port: 9000
           httpSupport: true
       start: yarn start
-      # healthCheck:
-      #   httpGet:
-      #     port: 9000
-      #     path: /health
+      healthCheck:
+        httpGet:
+          port: 9000
+          path: /health
