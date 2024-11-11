@@ -1,7 +1,7 @@
 #yamlPreprocessor=on
 project:
   name: recipe-medusa
-  mode: LIGHT
+  corePackage: LIGHT
   tags:
     - zerops-recipe
 
