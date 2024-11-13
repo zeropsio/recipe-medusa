@@ -40,7 +40,7 @@ services:
       IMGPROXY_KEY: <@generateRandomString(<32>) | toHex>
       IMGPROXY_SALT: <@generateRandomString(<32>) | toHex>
       IMGPROXY_ALLOWED_SOURCES: ${storage_apiUrl}/${storage_bucketName}/
-    priority: 100
+    priority: 90
 
   - hostname: medusa
     type: nodejs@22
