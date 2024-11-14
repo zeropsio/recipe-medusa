@@ -16,6 +16,7 @@ import {
 } from "@medusajs/medusa/core-flows";
 import {
   ExecArgs,
+  FileDTO,
   MedusaContainer,
 } from "@medusajs/framework/types";
 import {
@@ -346,7 +347,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
     productImageMap: Record<string, string[]>,
     container: MedusaContainer,
     access: "private" | "public" = "private"
-  ) {
+  ): Promise<Record<string, FileDTO[]>> {
     try {
       const results = {};
 
@@ -419,7 +420,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   const images = seedImages(container);
 
-  logger.log("Done seeding product images", images);
+  logger.info("Done seeding product images");
+  logger.debug(JSON.stringify(images));
+  logger.info("After images log");
 
   await createProductsWorkflow(container).run({
     input: {
