@@ -415,9 +415,11 @@ export default async function seedDemoData({ container }: ExecArgs) {
     }
   }
 
+  logger.info("Seeding product images to S3.");
+
   const images = seedImages(container);
 
-  logger.log({images});
+  logger.log("Done seeding product images", images);
 
   await createProductsWorkflow(container).run({
     input: {
