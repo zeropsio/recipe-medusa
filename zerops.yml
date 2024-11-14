@@ -3,7 +3,6 @@ zerops:
     build:
       envVariables:
         BACKEND_URL: ${RUNTIME_zeropsSubdomain}
-        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${RUNTIME_NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
       base: nodejs@22
       buildCommands:
         - yarn
