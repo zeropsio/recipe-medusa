@@ -37,8 +37,8 @@ zerops:
       initCommands:
         - zsc execOnce ${appVersionId}_migration npx medusa db:migrate
         - zsc execOnce ${appVersionId}_links npx medusa db:sync-links
-        - zsc execOnce -r initialData yarn seed
-        - zsc execOnce -r initialAdmin -- npx medusa user -e admin@email.com -p $SUPERADMIN_PASSWORD
+        - zsc execOnce initialData yarn seed
+        - zsc execOnce initialAdmin -- npx medusa user -e $SUPERADMIN_EMAIL -p $SUPERADMIN_PASSWORD
         - zsc execOnce initialSetPublishableKey -- npx medusa exec ./src/scripts/output-publishable-key.js | grep -o "<PK_TOKEN>.*</PK_TOKEN>" | sed 's/<PK_TOKEN>//;s/<\/PK_TOKEN>//' | zsc setSecretEnv CHANNEL_PUBLISHABLE_KEY
       ports:
         - port: 9000

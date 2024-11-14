@@ -50,6 +50,7 @@ services:
       ADMIN_CORS: ${zeropsSubdomain}
       COOKIE_SECRET: <@generateRandomString(<32>)>
       JWT_SECRET: <@generateRandomString(<32>)>
+      SUPERADMIN_EMAIL: admin@example.com
       SUPERADMIN_PASSWORD: <@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
