@@ -12,6 +12,7 @@ import {
   linkSalesChannelsToApiKeyWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
+  uploadFilesWorkflow
 } from "@medusajs/medusa/core-flows";
 import {
   ExecArgs,
