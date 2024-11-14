@@ -20,46 +20,88 @@ export default async function seedImages({ container }: ExecArgs) {
     container: MedusaContainer,
     access: "private" | "public" = "private"
   ): Promise<Record<string, FileDTO[]>> {
+    const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
+
     try {
-      const results = {};
+      const results: Record<string, FileDTO[]> = {};
 
       for (const [productName, filePaths] of Object.entries(productImageMap)) {
-        // Read all local files for this product
-        const files = await Promise.all(
-          filePaths.map(async (filePath) => {
-            const buffer = await readFile(filePath);
-            const filename = path.basename(filePath);
-            const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+        logger.info(`Processing product: ${productName} with ${filePaths.length} files`);
 
-            return {
-              filename,
-              mimeType,
-              content: buffer.toString('binary'),
-              access,
-            };
-          })
-        );
+        try {
+          // Read all local files for this product
+          const files = await Promise.all(
+            filePaths.map(async (filePath) => {
+              try {
+                logger.info(`Reading file: ${filePath}`);
+                const buffer = await readFile(filePath);
+                const filename = path.basename(filePath);
+                const mimeType = mime.lookup(filePath) || 'application/octet-stream';
 
-        // Upload using Medusa workflow
-        const { result } = await uploadFilesWorkflow(container).run({
-          input: {
-            files,
-          },
-        });
+                logger.info(`Successfully read file: ${filename} (${mimeType})`);
+                return {
+                  filename,
+                  mimeType,
+                  content: buffer.toString('binary'),
+                  access,
+                };
+              } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                const errorStack = error instanceof Error ? error.stack : undefined;
+                logger.error(`Error reading file ${filePath}: ${errorMessage}\n${errorStack || ''}`);
+                return null;
+              }
+            })
+          );
 
-        results[productName] = result;
+          // Filter out failed files
+          const validFiles = files.filter((f): f is NonNullable<typeof f> => f !== null);
+          logger.info(`Valid files for ${productName}: ${validFiles.length}/${files.length}`);
+
+          if (validFiles.length === 0) {
+            throw new Error(`No valid files processed for product ${productName}`);
+          }
+
+          logger.info(`Uploading files for product: ${productName}`);
+          const { result } = await uploadFilesWorkflow(container).run({
+            input: {
+              files: validFiles,
+            },
+          });
+
+          logger.info(`Upload successful for ${productName}. Files uploaded: ${result.map(f => f.url).join(', ')}`);
+
+          results[productName] = result;
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorStack = error instanceof Error ? error.stack : undefined;
+          logger.error(`Error processing product ${productName}: ${errorMessage}\n${errorStack || ''}`);
+          throw new MedusaError(
+            MedusaError.Types.INVALID_DATA,
+            `Error processing ${productName}: ${errorMessage}`
+          );
+        }
       }
+
+      logger.info(`All products processed successfully. Products: ${Object.keys(results).join(', ')}. Total files: ${
+        Object.values(results).reduce((acc, files) => acc + files.length, 0)
+      }`);
 
       return results;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      logger.error(`Fatal error in uploadLocalFiles: ${errorMessage}\n${errorStack || ''}`);
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
-        error.message
+        errorMessage
       );
     }
   }
 
   async function seedImages(container: MedusaContainer) {
+    const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
+
     const productImageMap = {
       [PRODUCTS.MedusaTShirt]: [
         "/var/www/src/scripts/seed-files/tee-black-front.png",
@@ -82,17 +124,32 @@ export default async function seedImages({ container }: ExecArgs) {
     };
 
     try {
-      return await uploadLocalFiles(productImageMap, container, "public");
+      logger.info(`Starting image upload process. Products: ${Object.keys(productImageMap).length}, Files: ${
+        Object.values(productImageMap).reduce((acc, files) => acc + files.length, 0)
+      }`);
+
+      const result = await uploadLocalFiles(productImageMap, container, "public");
+
+      logger.info(`Image upload completed successfully. Products processed: ${Object.keys(result).join(', ')}`);
+
+      return result;
     } catch (error) {
-      console.error("Error:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      logger.error(`Error in seedImages: ${errorMessage}\n${errorStack || ''}`);
+      throw error;
     }
   }
 
-  logger.info("Seeding product images to S3.");
+  logger.info("Starting product image seeding to S3");
 
-  const images = seedImages(container);
-
-  logger.info(JSON.stringify(images));
-
-  logger.info("After log");
+  try {
+    const images = await seedImages(container);
+    logger.info(`Seeding completed successfully. Products: ${Object.keys(images).join(', ')}`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    logger.error(`Fatal error during image seeding: ${errorMessage}\n${errorStack || ''}`);
+    process.exit(1);
+  }
 }
