@@ -2,6 +2,11 @@
 project:
   name: recipe-medusa
   corePackage: LIGHT
+  envVariables:
+    NEXT_STORE_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
+    ANALOG_STORE_URL: https://analogstore-${zeropsSubdomainHost}-3000.prg1.zerops.app
+    MEDUSA_INSTANCE_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
+    IMGPROXY_INSTANCE_URL: https://imgproxy-${zeropsSubdomainHost}.prg1.zerops.app
   tags:
     - zerops-recipe
 
