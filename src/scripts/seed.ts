@@ -16,12 +16,17 @@ import {
 } from "@medusajs/medusa/core-flows";
 import {
   ExecArgs,
+  MedusaContainer,
 } from "@medusajs/framework/types";
 import {
   ContainerRegistrationKeys,
+  MedusaError,
   Modules,
   ProductStatus
 } from "@medusajs/framework/utils";
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import mime from 'mime';
 
 export default async function seedDemoData({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
@@ -330,6 +335,89 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
 
+  enum PRODUCTS {
+    MedusaTShirt = "Medusa T-Shirt",
+    MedusaSweatshirt = "Medusa Sweatshirt",
+    MedusaSweatpants = "Medusa Sweatpants",
+    MedusaShorts = "Medusa Shorts",
+  };
+
+  async function uploadLocalFiles(
+    productImageMap: Record<string, string[]>,
+    container: MedusaContainer,
+    access: "private" | "public" = "private"
+  ) {
+    try {
+      const results = {};
+
+      for (const [productName, filePaths] of Object.entries(productImageMap)) {
+        // Read all local files for this product
+        const files = await Promise.all(
+          filePaths.map(async (filePath) => {
+            const buffer = await readFile(filePath);
+            const filename = path.basename(filePath);
+            const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+
+            return {
+              filename,
+              mimeType,
+              content: buffer.toString('binary'),
+              access,
+            };
+          })
+        );
+
+        // Upload using Medusa workflow
+        const { result } = await uploadFilesWorkflow(container).run({
+          input: {
+            files,
+          },
+        });
+
+        results[productName] = result;
+      }
+
+      return results;
+    } catch (error) {
+      throw new MedusaError(
+        MedusaError.Types.INVALID_DATA,
+        error.message
+      );
+    }
+  }
+
+  async function seedImages(container: MedusaContainer) {
+    const productImageMap = {
+      [PRODUCTS.MedusaTShirt]: [
+        "/var/www/src/scripts/seed-files/tee-black-front.png",
+        "/var/www/src/scripts/seed-files/tee-black-back.png",
+        "/var/www/src/scripts/seed-files/tee-white-front.png",
+        "/var/www/src/scripts/seed-files/tee-white-back.png"
+      ],
+      [PRODUCTS.MedusaSweatshirt]: [
+        "/var/www/src/scripts/seed-files/sweatshirt-vintage-front.png",
+        "/var/www/src/scripts/seed-files/sweatshirt-vintage-back.png"
+      ],
+      [PRODUCTS.MedusaSweatpants]: [
+        "/var/www/src/scripts/seed-files/sweatpants-gray-front.png",
+        "/var/www/src/scripts/seed-files/sweatpants-gray-back.png"
+      ],
+      [PRODUCTS.MedusaShorts]: [
+        "/var/www/src/scripts/seed-files/shorts-vintage-front.png",
+        "/var/www/src/scripts/seed-files/shorts-vintage-back.png"
+      ],
+    };
+
+    try {
+      return await uploadLocalFiles(productImageMap, container, "public");
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const images = seedImages(container);
+
   await createProductsWorkflow(container).run({
     input: {
       products: [
@@ -343,20 +431,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           handle: "t-shirt",
           weight: 400,
           status: ProductStatus.PUBLISHED,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-black-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-black-back.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-white-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-white-back.png",
-            },
-          ],
+          images: images[PRODUCTS.MedusaTShirt],
           options: [
             {
               title: "Size",
@@ -529,14 +604,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           handle: "sweatshirt",
           weight: 400,
           status: ProductStatus.PUBLISHED,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatshirt-vintage-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatshirt-vintage-back.png",
-            },
-          ],
+          images: images[PRODUCTS.MedusaSweatshirt],
           options: [
             {
               title: "Size",
@@ -627,14 +695,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           handle: "sweatpants",
           weight: 400,
           status: ProductStatus.PUBLISHED,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-back.png",
-            },
-          ],
+          images: images[PRODUCTS.MedusaSweatpants],
           options: [
             {
               title: "Size",
@@ -725,14 +786,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
           handle: "shorts",
           weight: 400,
           status: ProductStatus.PUBLISHED,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/shorts-vintage-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/shorts-vintage-back.png",
-            },
-          ],
+          images: images[PRODUCTS.MedusaShorts],
           options: [
             {
               title: "Size",

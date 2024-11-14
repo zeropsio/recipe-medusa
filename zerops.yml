@@ -11,7 +11,7 @@ zerops:
         - .medusa/server/~
         - tsconfig.json
         - node_modules
-        - ./src/links
+        - ./src/scripts/seed-files
     deploy:
       readinessCheck:
         httpGet:

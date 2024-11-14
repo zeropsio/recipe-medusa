@@ -65,7 +65,8 @@ export default async function seedImages({ container }: ExecArgs) {
   // const storeModuleService = container.resolve(Modules.STORE);
 
   const filePaths = [
-    './seed-files/shorts-vintage-back.png'
+    '/var/www/seed-files/shorts-vintage-back.png',
+    '/var/www/seed-files/shorts-vintage-back.png'
   ];
 
   try {
