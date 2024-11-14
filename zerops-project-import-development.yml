@@ -56,9 +56,9 @@ services:
       minRam: 0.5
     priority: 90
 
-  - hostname: storefront
+  - hostname: nextstore
     type: nodejs@22
-    buildFromGit: https://github.com/zeropsio/recipe-medusa-storefront
+    buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
     envSecrets:
       REVALIDATE_SECRET: <@generateRandomString(<16>)>
