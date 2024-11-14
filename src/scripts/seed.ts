@@ -410,13 +410,14 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
     try {
       return await uploadLocalFiles(productImageMap, container, "public");
-
     } catch (error) {
       console.error("Error:", error);
     }
   }
 
   const images = seedImages(container);
+
+  logger.log({images});
 
   await createProductsWorkflow(container).run({
     input: {
