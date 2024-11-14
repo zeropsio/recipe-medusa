@@ -343,14 +343,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
     MedusaShorts = "Medusa Shorts",
   };
 
-
-  enum PRODUCTS {
-    MedusaTShirt = "Medusa T-Shirt",
-    MedusaSweatshirt = "Medusa Sweatshirt",
-    MedusaSweatpants = "Medusa Sweatpants",
-    MedusaShorts = "Medusa Shorts",
-  };
-
   async function uploadLocalFiles(
     productImageMap: Record<string, string[]>,
     container: MedusaContainer,
