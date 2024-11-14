@@ -51,7 +51,6 @@ services:
       COOKIE_SECRET: <@generateRandomString(<32>)>
       JWT_SECRET: <@generateRandomString(<32>)>
       SUPERADMIN_PASSWORD: <@generateRandomString(<16>)>
-      CHANNEL_PUBLISHABLE_KEY:
     verticalAutoscaling:
       minRam: 0.5
     priority: 90
