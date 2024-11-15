@@ -38,7 +38,7 @@ services:
     priority: 100
 
   - hostname: imgproxy
-    type: 22.04
+    type: go@1.22
     buildFromGit: https://github.com/zeropsio/recipe-imgproxy
     enableSubdomainAccess: true
     envSecrets:
@@ -72,7 +72,7 @@ services:
 
   - hostname: analogstore
     type: nodejs@22
-    buildFromGit: https://github.com/fxck/analog-spartan-medusa-storefront
+    buildFromGit: https://github.com/zeropsio/recipe-medusa-analogstore
     enableSubdomainAccess: true
     verticalAutoscaling:
       minRam: 0.5
