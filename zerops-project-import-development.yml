@@ -70,5 +70,10 @@ services:
     verticalAutoscaling:
       minRam: 0.5
 
-
+  - hostname: analogstore
+    type: nodejs@22
+    buildFromGit: https://github.com/fxck/analog-spartan-medusa-storefront
+    enableSubdomainAccess: true
+    verticalAutoscaling:
+      minRam: 0.5
 
