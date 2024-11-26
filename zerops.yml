@@ -23,7 +23,7 @@ zerops:
         DATABASE_TYPE: postgres
         NODE_ENV: production
         BACKEND_URL: ${PROJECT_MEDUSA_INSTANCE_URL}
-        STORE_CORS: ${PROJECT_NEXT_STORE_URL},${PROJECT_ANALOG_STORE_URL}
+        STORE_CORS: ${PROJECT_NEXT_STORE_URL},${PROJECT_ANALOG_STORE_URL},http://localhost:5173
         DATABASE_URL: postgresql://${db_user}:${db_password}@${db_hostname}:5432/${db_hostname}
         MINIO_BUCKET: ${storage_bucketName}
         MINIO_ENDPOINT: ${storage_apiUrl}
