@@ -12,6 +12,7 @@ zerops:
         - tsconfig.json
         - node_modules
         - ./src/scripts/seed-files
+      cache: node_modules
     deploy:
       readinessCheck:
         httpGet:
