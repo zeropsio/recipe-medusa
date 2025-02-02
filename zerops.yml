@@ -32,7 +32,7 @@ zerops:
         REDIS_URL: redis://${redis_hostname}:6379
         CACHE_REDIS_URL: redis://${redis_hostname}:6379
         EVENTS_REDIS_URL: redis://${redis_hostname}:6379
-        MEILISEARCH_HOST: ${search_hostname}:${search_port}
+        MEILISEARCH_HOST: http://${search_hostname}:${search_port}
         MEILISEARCH_API_KEY: ${search_masterKey}
       initCommands:
         - zsc execOnce ${appVersionId}_migration npx medusa db:migrate
