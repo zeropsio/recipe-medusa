@@ -16,15 +16,10 @@ services:
     mode: NON_HA
     priority: 100
 
-  # # # # # # # # # # # # # # # # # # #
-  # currently disabled as meilisearch #
-  # is not supported in medusa v2 yet #
-  # # # # # # # # # # # # # # # # # # #
-  #
-  # - hostname: search
-  #   type: meilisearch@1.10
-  #   mode: NON_HA
-  #   priority: 100
+  - hostname: search
+    type: meilisearch@1.10
+    mode: NON_HA
+    priority: 100
 
   - hostname: redis
     type: valkey@7.2
