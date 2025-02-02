@@ -11,12 +11,11 @@ export default async function searchIndexScript({ container }: ExecArgs) {
   )
 
   const meilisearchIndexService: MeiliSearchService = container.resolve(
-    'meilisearchService'
+    'meilisearch'
   )
 
   const products = await productModuleService.listProducts()
 
-  const res = await meilisearchIndexService.addDocuments('products', products, SearchUtils.indexTypes.PRODUCTS)
+  await meilisearchIndexService.addDocuments('products', products, SearchUtils.indexTypes.PRODUCTS)
 
-  console.log({ products, res })
 }
