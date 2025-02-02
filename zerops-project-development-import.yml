@@ -20,6 +20,7 @@ services:
   - hostname: search
     type: meilisearch@1.10
     mode: NON_HA
+    enableSubdomainAccess: true
     priority: 100
 
   - hostname: redis
