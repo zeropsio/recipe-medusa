@@ -11,7 +11,7 @@ export default async function searchIndexScript({ container }: ExecArgs) {
   )
 
   const meilisearchIndexService: MeiliSearchService = container.resolve(
-    'index-meilisearch'
+    'meilisearchService'
   )
 
   const products = await productModuleService.listProducts()
