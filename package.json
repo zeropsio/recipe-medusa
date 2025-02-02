@@ -25,7 +25,7 @@
     "seedInitialData": "medusa exec ./src/scripts/seed.js",
     "addInitialSearchDocuments": "medusa exec ./src/scripts/search-index.js",
     "setInitialPublishableKey": "bash -c \"medusa exec ./src/scripts/output-publishable-key.js | grep -o '<PK_TOKEN>.*</PK_TOKEN>' | sed 's/<PK_TOKEN>//g;s/<\\/PK_TOKEN>//g' | zsc setSecretEnv CHANNEL_PUBLISHABLE_KEY\"",
-    "setSearchApiKey": "curl -s -X GET \"${medusa_MEILISEARCH_HOST}/keys\" -H \"Authorization: Bearer ${medusa_MEILISEARCH_API_KEY}\" | awk -F'\"key\":\"' '/Default Search API Key/{print $2}' | cut -d'\"' -f1 | zsc setSecretEnv PUBLIC_SEARCH_API_KEY"
+    "setSearchApiKey": "curl -s -X GET \"${MEILISEARCH_HOST}/keys\" -H \"Authorization: Bearer ${MEILISEARCH_API_KEY}\" | awk -F'\"key\":\"' '/Default Search API Key/{print $2}' | cut -d'\"' -f1 | zsc setSecretEnv PUBLIC_SEARCH_API_KEY"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.4.0",
