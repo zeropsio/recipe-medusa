@@ -36,14 +36,14 @@ zerops:
         MEILISEARCH_HOST: http://${search_hostname}:${search_port}
         MEILISEARCH_API_KEY: ${search_masterKey}
       initCommands:
+        # with each deploy
+        - zsc execOnce ${appVersionId}_migration -- yarn migrate
+        - zsc execOnce ${appVersionId}_links -- yarn syncLinks
         # initial setup, happens once in service lifetime
         - zsc execOnce seedInitialData -- yarn seedInitialData
         - zsc execOnce addInitialSearchDocuments -- yarn addInitialSearchDocuments
         - zsc execOnce createInitialSuperadmin -- yarn createInitialSuperadmin
         - zsc execOnce setInitialPublishableKey -- yarn setInitialPublishableKey
-        # with each deploy
-        - zsc execOnce ${appVersionId}_migration -- yarn migrate
-        - zsc execOnce ${appVersionId}_links -- yarn syncLinks
       ports:
         - port: 9000
           httpSupport: true
