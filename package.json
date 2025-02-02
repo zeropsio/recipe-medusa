@@ -24,7 +24,7 @@
     "createInitialSuperadmin": "medusa user -e $SUPERADMIN_EMAIL -p $SUPERADMIN_PASSWORD",
     "seedInitialData": "medusa exec ./src/scripts/seed.js",
     "addInitialSearchDocuments": "medusa exec ./src/scripts/search-index.js",
-    "setInitialPublishableKey": "bash -c \"medusa exec ./src/scripts/output-publishable-key.js | grep -o '<PK_TOKEN>.*</PK_TOKEN>' | sed 's/<PK_TOKEN>//;s/<\/PK_TOKEN>//' | zsc setSecretEnv CHANNEL_PUBLISHABLE_KEY\""
+    "setInitialPublishableKey": "bash -c \"medusa exec ./src/scripts/output-publishable-key.js | grep -o '<PK_TOKEN>.*</PK_TOKEN>' | sed 's/<PK_TOKEN>//g;s/<\\/PK_TOKEN>//g' | zsc setSecretEnv CHANNEL_PUBLISHABLE_KEY\""
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.4.0",

@@ -40,10 +40,10 @@ zerops:
         - zsc execOnce ${appVersionId}_migration -- yarn migrate
         - zsc execOnce ${appVersionId}_links -- yarn syncLinks
         # initial setup, happens once in service lifetime
+        - zsc execOnce setInitialPublishableKey -- yarn setInitialPublishableKey
+        - zsc execOnce createInitialSuperadmin -- yarn createInitialSuperadmin
         - zsc execOnce seedInitialData -- yarn seedInitialData
         - zsc execOnce addInitialSearchDocuments -- yarn addInitialSearchDocuments
-        - zsc execOnce createInitialSuperadmin -- yarn createInitialSuperadmin
-        - zsc execOnce setInitialPublishableKey -- yarn setInitialPublishableKey
       ports:
         - port: 9000
           httpSupport: true
