@@ -4388,6 +4388,13 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.13.1.tgz#07e2a8006f23a3bc898b3f317e0a58cc8076b86e"
   integrity sha512-so+DHzZKsoOcoXrILB4rqDkMDy7NLMErRdOxvzvOKb507YINKUP4Di+shbTZDhSE/pBZ+vr7XGIpcOO0VLSA+Q==
 
+"@rokmohar/medusa-plugin-meilisearch@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@rokmohar/medusa-plugin-meilisearch/-/medusa-plugin-meilisearch-1.0.3.tgz#6397d46c07f8fe0566ef2a7e62a70c3d2a244918"
+  integrity sha512-ScBS0A8tTHVyal6qymFxoUmKP7OERwbbCIET1G0GGV+r57fjnYhSGvY9TWwXUJxM2HG7GA4ikHrLSBNaoTs7eQ==
+  dependencies:
+    meilisearch "^0.48.2"
+
 "@rollup/plugin-node-resolve@^16.0.0":
   version "16.0.0"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-16.0.0.tgz#b1a0594661f40d7b061d82136e847354ff85f211"
@@ -8537,6 +8544,11 @@ media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==
+
+meilisearch@^0.48.2:
+  version "0.48.2"
+  resolved "https://registry.yarnpkg.com/meilisearch/-/meilisearch-0.48.2.tgz#4c83e927d90b67e5100f504afcd824d4515acbf8"
+  integrity sha512-auDB6grs3f/+dVzzPiAOOFnrVN/L87/+SWZfy56TpimDinWjU4u6Jc2o6lgeLluotpbMOFY1WpTTbqtUdMduQw==
 
 merge-descriptors@1.0.3:
   version "1.0.3"

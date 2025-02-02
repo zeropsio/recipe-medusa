@@ -3,6 +3,8 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
+const MEILISEARCH_HOST = process.env.MEILISEARCH_HOST || "";
+const MEILISEARCH_API_KEY = process.env.MEILISEARCH_API_KEY || "";
 const BACKEND_URL = process.env.BACKEND_URL || "";
 
 module.exports = defineConfig({
@@ -27,6 +29,31 @@ module.exports = defineConfig({
     },
     redisUrl: REDIS_URL,
   },
+  plugins: [
+    {
+      resolve: '@rokmohar/medusa-plugin-meilisearch',
+      options: {
+        config: {
+          host: MEILISEARCH_HOST,
+          apiKey: MEILISEARCH_API_KEY
+        },
+        settings: {
+          products: {
+            indexSettings: {
+              searchableAttributes: ['title', 'description', 'variant_sku'],
+              displayedAttributes: ['id', 'title', 'description', 'variant_sku', 'thumbnail', 'handle'],
+            },
+            primaryKey: 'id',
+            // Create your own transformer
+            /*transformer: (product) => ({
+              id: product.id,
+              // other attributes...
+            }),*/
+          },
+        },
+      },
+    },
+  ],
   modules: [
     {
       resolve: "@medusajs/medusa/cache-redis",
@@ -63,37 +90,5 @@ module.exports = defineConfig({
         ],
       },
     },
-    // {
-    //   resolve: `medusa-plugin-meilisearch`,
-    //   options: {
-    //     config: {
-    //       host: process.env.MEILISEARCH_HOST,
-    //       apiKey: process.env.MEILISEARCH_API_KEY,
-    //     },
-    //     settings: {
-    //       products: {
-    //         indexSettings: {
-    //           searchableAttributes: [
-    //             "title",
-    //             "description",
-    //             "variant_sku",
-    //           ],
-    //           displayedAttributes: [
-    //             "title",
-    //             "description",
-    //             "variant_sku",
-    //             "thumbnail",
-    //             "handle",
-    //           ],
-    //         },
-    //         primaryKey: "id",
-    //         // transformer: (product) => ({
-    //         //   id: product.id,
-    //         //   // other attributes...
-    //         // }),
-    //       },
-    //     },
-    //   },
-    // },
-  ]
+  ],
 })
