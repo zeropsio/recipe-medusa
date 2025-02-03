@@ -34,16 +34,6 @@ services:
     objectStoragePolicy: public-read
     priority: 100
 
-  - hostname: imgproxy
-    type: go@1.22
-    buildFromGit: https://github.com/zeropsio/recipe-imgproxy
-    enableSubdomainAccess: true
-    envSecrets:
-      IMGPROXY_KEY: <@generateRandomString(<32>) | toHex>
-      IMGPROXY_SALT: <@generateRandomString(<32>) | toHex>
-      IMGPROXY_ALLOWED_SOURCES: ${storage_apiUrl}/${storage_bucketName}/
-    priority: 90
-
   - hostname: medusa
     type: nodejs@22
     buildFromGit: https://github.com/zeropsio/recipe-medusa

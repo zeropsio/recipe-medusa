@@ -44,11 +44,6 @@ module.exports = defineConfig({
               displayedAttributes: ['id', 'title', 'description', 'variant_sku', 'thumbnail', 'handle'],
             },
             primaryKey: 'id',
-            // Create your own transformer
-            /*transformer: (product) => ({
-              id: product.id,
-              // other attributes...
-            }),*/
           },
         },
       },
