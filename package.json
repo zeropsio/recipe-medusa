@@ -21,7 +21,7 @@
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "migrate": "medusa db:migrate",
     "syncLinks": "medusa db:sync-links",
-    "createInitialSuperadmin": "medusa user -e $SUPERADMIN_EMAIL -p $SUPERADMIN_PASSWORD",
+    "createInitialSuperadmin": "medusa user -e \"$SUPERADMIN_EMAIL\" -p \"$SUPERADMIN_PASSWORD\"",
     "seedInitialData": "medusa exec ./src/scripts/seed.js",
     "addInitialSearchDocuments": "medusa exec ./src/scripts/search-index.js",
     "setInitialPublishableKey": "bash -c \"medusa exec ./src/scripts/output-publishable-key.js | grep -o '<PK_TOKEN>.*</PK_TOKEN>' | sed 's/<PK_TOKEN>//g;s/<\\/PK_TOKEN>//g' | tr -d '\\n\\r' | zsc setSecretEnv CHANNEL_PUBLISHABLE_KEY\"",
