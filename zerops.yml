@@ -43,7 +43,6 @@ zerops:
         - zsc execOnce createInitialSuperadmin -- yarn createInitialSuperadmin
         - zsc execOnce seedInitialData -- yarn seedInitialData
         - zsc execOnce setInitialPublishableKey -- yarn setInitialPublishableKey
-        - zsc execOnce setSearchApiKey -- yarn setSearchApiKey
         - zsc execOnce addInitialSearchDocuments -- yarn addInitialSearchDocuments
       ports:
         - port: 9000
