@@ -9,6 +9,7 @@ project:
     IMGPROXY_INSTANCE_URL: https://imgproxy-${zeropsSubdomainHost}.prg1.zerops.app
   tags:
     - zerops-recipe
+    - development
 
 services:
   - hostname: db
