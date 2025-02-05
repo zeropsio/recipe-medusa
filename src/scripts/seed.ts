@@ -1,5 +1,6 @@
 import {
   createApiKeysWorkflow,
+  createCollectionsWorkflow,
   createInventoryLevelsWorkflow,
   createProductCategoriesWorkflow,
   createProductsWorkflow,
@@ -12,9 +13,10 @@ import {
   linkSalesChannelsToApiKeyWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
-  uploadFilesWorkflow
+  uploadFilesWorkflow,
 } from "@medusajs/medusa/core-flows";
 import {
+  CreateProductCollectionDTO,
   ExecArgs,
   FileDTO,
   MedusaContainer,
@@ -23,18 +25,16 @@ import {
   ContainerRegistrationKeys,
   MedusaError,
   Modules,
-  ProductStatus
+  ProductStatus,
 } from "@medusajs/framework/utils";
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
-import mime from 'mime';
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import mime from "mime";
 
 export default async function seedDemoData({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
-  const remoteLink = container.resolve(
-    ContainerRegistrationKeys.REMOTE_LINK
-  );
-  const query = container.resolve(ContainerRegistrationKeys.QUERY)
+  const remoteLink = container.resolve(ContainerRegistrationKeys.REMOTE_LINK);
+  const query = container.resolve(ContainerRegistrationKeys.QUERY);
   const fulfillmentModuleService = container.resolve(Modules.FULFILLMENT);
   const salesChannelModuleService = container.resolve(Modules.SALES_CHANNEL);
   const storeModuleService = container.resolve(Modules.STORE);
@@ -88,6 +88,12 @@ export default async function seedDemoData({ container }: ExecArgs) {
           name: "Europe",
           currency_code: "eur",
           countries,
+          payment_providers: ["pp_system_default"],
+        },
+        {
+          name: "United States",
+          currency_code: "usd",
+          countries: ["us"],
           payment_providers: ["pp_system_default"],
         },
       ],
@@ -341,7 +347,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
     MedusaSweatshirt = "Medusa Sweatshirt",
     MedusaSweatpants = "Medusa Sweatpants",
     MedusaShorts = "Medusa Shorts",
-  };
+  }
 
   async function uploadLocalFiles(
     productImageMap: Record<string, string[]>,
@@ -354,7 +360,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
       const results: Record<string, FileDTO[]> = {};
 
       for (const [productName, filePaths] of Object.entries(productImageMap)) {
-        logger.info(`Processing product: ${productName} with ${filePaths.length} files`);
+        logger.info(
+          `Processing product: ${productName} with ${filePaths.length} files`
+        );
 
         try {
           // Read all local files for this product
@@ -364,30 +372,45 @@ export default async function seedDemoData({ container }: ExecArgs) {
                 logger.info(`Reading file: ${filePath}`);
                 const buffer = await readFile(filePath);
                 const filename = path.basename(filePath);
-                const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+                const mimeType =
+                  mime.lookup(filePath) || "application/octet-stream";
 
-                logger.info(`Successfully read file: ${filename} (${mimeType})`);
+                logger.info(
+                  `Successfully read file: ${filename} (${mimeType})`
+                );
                 return {
                   filename,
                   mimeType,
-                  content: buffer.toString('binary'),
+                  content: buffer.toString("binary"),
                   access,
                 };
               } catch (error) {
-                const errorMessage = error instanceof Error ? error.message : String(error);
-                const errorStack = error instanceof Error ? error.stack : undefined;
-                logger.error(`Error reading file ${filePath}: ${errorMessage}\n${errorStack || ''}`);
+                const errorMessage =
+                  error instanceof Error ? error.message : String(error);
+                const errorStack =
+                  error instanceof Error ? error.stack : undefined;
+                logger.error(
+                  `Error reading file ${filePath}: ${errorMessage}\n${
+                    errorStack || ""
+                  }`
+                );
                 return null;
               }
             })
           );
 
           // Filter out failed files
-          const validFiles = files.filter((f): f is NonNullable<typeof f> => f !== null);
-          logger.info(`Valid files for ${productName}: ${validFiles.length}/${files.length}`);
+          const validFiles = files.filter(
+            (f): f is NonNullable<typeof f> => f !== null
+          );
+          logger.info(
+            `Valid files for ${productName}: ${validFiles.length}/${files.length}`
+          );
 
           if (validFiles.length === 0) {
-            throw new Error(`No valid files processed for product ${productName}`);
+            throw new Error(
+              `No valid files processed for product ${productName}`
+            );
           }
 
           logger.info(`Uploading files for product: ${productName}`);
@@ -397,13 +420,22 @@ export default async function seedDemoData({ container }: ExecArgs) {
             },
           });
 
-          logger.info(`Upload successful for ${productName}. Files uploaded: ${result.map(f => f.url).join(', ')}`);
+          logger.info(
+            `Upload successful for ${productName}. Files uploaded: ${result
+              .map((f) => f.url)
+              .join(", ")}`
+          );
 
           results[productName] = result;
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           const errorStack = error instanceof Error ? error.stack : undefined;
-          logger.error(`Error processing product ${productName}: ${errorMessage}\n${errorStack || ''}`);
+          logger.error(
+            `Error processing product ${productName}: ${errorMessage}\n${
+              errorStack || ""
+            }`
+          );
           throw new MedusaError(
             MedusaError.Types.INVALID_DATA,
             `Error processing ${productName}: ${errorMessage}`
@@ -411,19 +443,24 @@ export default async function seedDemoData({ container }: ExecArgs) {
         }
       }
 
-      logger.info(`All products processed successfully. Products: ${Object.keys(results).join(', ')}. Total files: ${
-        Object.values(results).reduce((acc, files) => acc + files.length, 0)
-      }`);
+      logger.info(
+        `All products processed successfully. Products: ${Object.keys(
+          results
+        ).join(", ")}. Total files: ${Object.values(results).reduce(
+          (acc, files) => acc + files.length,
+          0
+        )}`
+      );
 
       return results;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
-      logger.error(`Fatal error in uploadLocalFiles: ${errorMessage}\n${errorStack || ''}`);
-      throw new MedusaError(
-        MedusaError.Types.INVALID_DATA,
-        errorMessage
+      logger.error(
+        `Fatal error in uploadLocalFiles: ${errorMessage}\n${errorStack || ""}`
       );
+      throw new MedusaError(MedusaError.Types.INVALID_DATA, errorMessage);
     }
   }
 
@@ -435,44 +472,62 @@ export default async function seedDemoData({ container }: ExecArgs) {
         "/var/www/src/scripts/seed-files/tee-black-front.png",
         "/var/www/src/scripts/seed-files/tee-black-back.png",
         "/var/www/src/scripts/seed-files/tee-white-front.png",
-        "/var/www/src/scripts/seed-files/tee-white-back.png"
+        "/var/www/src/scripts/seed-files/tee-white-back.png",
       ],
       [PRODUCTS.MedusaSweatshirt]: [
         "/var/www/src/scripts/seed-files/sweatshirt-vintage-front.png",
-        "/var/www/src/scripts/seed-files/sweatshirt-vintage-back.png"
+        "/var/www/src/scripts/seed-files/sweatshirt-vintage-back.png",
       ],
       [PRODUCTS.MedusaSweatpants]: [
         "/var/www/src/scripts/seed-files/sweatpants-gray-front.png",
-        "/var/www/src/scripts/seed-files/sweatpants-gray-back.png"
+        "/var/www/src/scripts/seed-files/sweatpants-gray-back.png",
       ],
       [PRODUCTS.MedusaShorts]: [
         "/var/www/src/scripts/seed-files/shorts-vintage-front.png",
-        "/var/www/src/scripts/seed-files/shorts-vintage-back.png"
+        "/var/www/src/scripts/seed-files/shorts-vintage-back.png",
       ],
     };
 
     try {
-      logger.info(`Starting image upload process. Products: ${Object.keys(productImageMap).length}, Files: ${
-        Object.values(productImageMap).reduce((acc, files) => acc + files.length, 0)
-      }`);
+      logger.info(
+        `Starting image upload process. Products: ${
+          Object.keys(productImageMap).length
+        }, Files: ${Object.values(productImageMap).reduce(
+          (acc, files) => acc + files.length,
+          0
+        )}`
+      );
 
-      const result = await uploadLocalFiles(productImageMap, container, "public");
+      const result = await uploadLocalFiles(
+        productImageMap,
+        container,
+        "public"
+      );
 
-      logger.info(`Image upload completed successfully. Products processed: ${Object.keys(result).join(', ')}`);
+      logger.info(
+        `Image upload completed successfully. Products processed: ${Object.keys(
+          result
+        ).join(", ")}`
+      );
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       const errorStack = error instanceof Error ? error.stack : undefined;
-      logger.error(`Error in seedImages: ${errorMessage}\n${errorStack || ''}`);
+      logger.error(`Error in seedImages: ${errorMessage}\n${errorStack || ""}`);
       throw error;
     }
   }
 
   const images = await seedImages(container);
-  logger.info(`Seeding completed successfully. Products: ${Object.keys(images).join(', ')}`);
+  logger.info(
+    `Seeding completed successfully. Products: ${Object.keys(images).join(
+      ", "
+    )}`
+  );
 
-  await createProductsWorkflow(container).run({
+  const { result: products } = await createProductsWorkflow(container).run({
     input: {
       products: [
         {
@@ -928,29 +983,49 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
 
   logger.info("Finished seeding product data.");
-
   logger.info("Seeding inventory levels.");
 
   const { data: inventoryItems } = await query.graph({
-    entity: 'inventory_item',
-    fields: ['id']
-  })
+    entity: "inventory_item",
+    fields: ["id"],
+  });
 
-  const inventoryLevels = []
+  const inventoryLevels = [];
   for (const inventoryItem of inventoryItems) {
     const inventoryLevel = {
       location_id: stockLocation.id,
       stocked_quantity: 1000000,
       inventory_item_id: inventoryItem.id,
-    }
-    inventoryLevels.push(inventoryLevel)
+    };
+    inventoryLevels.push(inventoryLevel);
   }
 
   await createInventoryLevelsWorkflow(container).run({
     input: {
-      inventory_levels: inventoryLevels
+      inventory_levels: inventoryLevels,
     },
-  })
+  });
 
   logger.info("Finished seeding inventory levels data.");
+
+  // Now create a collection and link the products
+  const collectionData: CreateProductCollectionDTO = {
+    title: "Latest Drops",
+    handle: "/latest-drops",
+  };
+
+  const { result: collections } = await createCollectionsWorkflow(
+    container
+  ).run({
+    input: {
+      collections: [collectionData],
+      additional_data: {
+        product_ids: products.map((p) => p.id),
+      },
+    },
+  });
+
+  logger.info(
+    `Created collection: ${collections[0].title} with ${products.length} products`
+  );
 }
