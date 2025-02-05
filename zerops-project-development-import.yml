@@ -5,7 +5,6 @@ project:
   envVariables:
     NEXT_STORE_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
     SEARCH_URL: https://search-${zeropsSubdomainHost}-7700.prg1.zerops.app
-    ANALOG_STORE_URL: https://analogstore-${zeropsSubdomainHost}-3000.prg1.zerops.app
     MEDUSA_INSTANCE_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
     IMGPROXY_INSTANCE_URL: https://imgproxy-${zeropsSubdomainHost}.prg1.zerops.app
   tags:
@@ -56,11 +55,3 @@ services:
       REVALIDATE_SECRET: <@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
-
-  - hostname: analogstore
-    type: nodejs@22
-    buildFromGit: https://github.com/zeropsio/recipe-medusa-analogstore
-    enableSubdomainAccess: true
-    verticalAutoscaling:
-      minRam: 0.5
-
