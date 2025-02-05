@@ -1,4 +1,5 @@
 import {
+  batchLinkProductsToCollectionWorkflow,
   createApiKeysWorkflow,
   createCollectionsWorkflow,
   createInventoryLevelsWorkflow,
@@ -1019,9 +1020,15 @@ export default async function seedDemoData({ container }: ExecArgs) {
   ).run({
     input: {
       collections: [collectionData],
-      additional_data: {
-        product_ids: products.map((p) => p.id),
-      },
+    },
+  });
+
+  await batchLinkProductsToCollectionWorkflow(
+    container
+  ).run({
+    input: {
+      id: collections[0].title,
+      add: products.map((p) => p.id),
     },
   });
 
