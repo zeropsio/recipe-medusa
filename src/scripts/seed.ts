@@ -1008,10 +1008,10 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info("Finished seeding inventory levels data.");
 
-  // Now create a collection and link the products
+  logger.info("Create collection");
   const collectionData: CreateProductCollectionDTO = {
     title: "Latest Drops",
-    handle: "/latest-drops",
+    handle: "latest-drops",
   };
 
   const { result: collections } = await createCollectionsWorkflow(
