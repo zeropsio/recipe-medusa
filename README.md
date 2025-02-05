@@ -1,11 +1,14 @@
 # Zerops x Medusa.js
 
 > [!CAUTION]
-> Experimental / WIP recipe
+> Experimental recipe
 
 <br/>
 
-[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/medusa)
+## Medusa.js + Next.js ecommerce starter 
 
-<br/>
-<br/>
+### Development / non highly available variant
+[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/medusa-next-devel)
+
+### Production / highly available variant
+[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/medusa-next-prod)
