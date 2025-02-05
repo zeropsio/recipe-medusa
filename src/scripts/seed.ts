@@ -1027,7 +1027,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
     container
   ).run({
     input: {
-      id: collections[0].title,
+      id: collections[0].id,
       add: products.map((p) => p.id),
     },
   });
