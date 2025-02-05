@@ -46,6 +46,7 @@ services:
       SUPERADMIN_PASSWORD: s4lt_<@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
+      cpu: 1
     priority: 90
 
   - hostname: nextstore
