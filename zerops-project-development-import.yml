@@ -43,7 +43,7 @@ services:
       COOKIE_SECRET: <@generateRandomString(<32>)>
       JWT_SECRET: <@generateRandomString(<32>)>
       SUPERADMIN_EMAIL: admin@example.com
-      SUPERADMIN_PASSWORD: <@generateRandomString(<16>)>
+      SUPERADMIN_PASSWORD: s4lt_<@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
     priority: 90
