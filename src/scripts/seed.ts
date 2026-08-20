@@ -2,7 +2,9 @@ import {
   batchLinkProductsToCollectionWorkflow,
   createApiKeysWorkflow,
   createCollectionsWorkflow,
+  createCustomerGroupsWorkflow,
   createInventoryLevelsWorkflow,
+  createPriceListsWorkflow,
   createProductCategoriesWorkflow,
   createProductsWorkflow,
   createRegionsWorkflow,
@@ -34,7 +36,7 @@ import mime from "mime";
 
 export default async function seedDemoData({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
-  const remoteLink = container.resolve(ContainerRegistrationKeys.REMOTE_LINK);
+  const link = container.resolve(ContainerRegistrationKeys.LINK);
   const query = container.resolve(ContainerRegistrationKeys.QUERY);
   const fulfillmentModuleService = container.resolve(Modules.FULFILLMENT);
   const salesChannelModuleService = container.resolve(Modules.SALES_CHANNEL);
@@ -64,6 +66,26 @@ export default async function seedDemoData({ container }: ExecArgs) {
     defaultSalesChannel = salesChannelResult;
   }
 
+  let b2bSalesChannel = await salesChannelModuleService.listSalesChannels({
+    name: "B2B",
+  });
+
+  if (!b2bSalesChannel.length) {
+    const { result: b2bSalesChannelResult } = await createSalesChannelsWorkflow(
+      container
+    ).run({
+      input: {
+        salesChannelsData: [
+          {
+            name: "B2B",
+            description: "Wholesale and company purchasing",
+          },
+        ],
+      },
+    });
+    b2bSalesChannel = b2bSalesChannelResult;
+  }
+
   await updateStoresWorkflow(container).run({
     input: {
       selector: { id: store.id },
@@ -82,6 +104,10 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
   logger.info("Seeding region data...");
+  const paymentProviders = ["pp_system_default"];
+  if (process.env.STRIPE_API_KEY) {
+    paymentProviders.push("pp_stripe_stripe");
+  }
   const { result: regionResult } = await createRegionsWorkflow(container).run({
     input: {
       regions: [
@@ -89,13 +115,13 @@ export default async function seedDemoData({ container }: ExecArgs) {
           name: "Europe",
           currency_code: "eur",
           countries,
-          payment_providers: ["pp_system_default"],
+          payment_providers: paymentProviders,
         },
         {
           name: "United States",
           currency_code: "usd",
           countries: ["us"],
-          payment_providers: ["pp_system_default"],
+          payment_providers: paymentProviders,
         },
       ],
     },
@@ -130,7 +156,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
   const stockLocation = stockLocationResult[0];
 
-  await remoteLink.create({
+  await link.create({
     [Modules.STOCK_LOCATION]: {
       stock_location_id: stockLocation.id,
     },
@@ -193,7 +219,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
     ],
   });
 
-  await remoteLink.create({
+  await link.create({
     [Modules.STOCK_LOCATION]: {
       stock_location_id: stockLocation.id,
     },
@@ -287,7 +313,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   await linkSalesChannelsToStockLocationWorkflow(container).run({
     input: {
       id: stockLocation.id,
-      add: [defaultSalesChannel[0].id],
+      add: [defaultSalesChannel[0].id, b2bSalesChannel[0].id],
     },
   });
   logger.info("Finished seeding stock location data.");
@@ -311,7 +337,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   await linkSalesChannelsToApiKeyWorkflow(container).run({
     input: {
       id: publishableApiKey.id,
-      add: [defaultSalesChannel[0].id],
+      add: [defaultSalesChannel[0].id, b2bSalesChannel[0].id],
     },
   });
   logger.info("Finished seeding publishable API key data.");
@@ -702,6 +728,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
             {
               id: defaultSalesChannel[0].id,
             },
+            {
+              id: b2bSalesChannel[0].id,
+            },
           ],
         },
         {
@@ -795,6 +824,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
             {
               id: defaultSalesChannel[0].id,
             },
+            {
+              id: b2bSalesChannel[0].id,
+            },
           ],
         },
         {
@@ -885,6 +917,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
           sales_channels: [
             {
               id: defaultSalesChannel[0].id,
+            },
+            {
+              id: b2bSalesChannel[0].id,
             },
           ],
         },
@@ -977,6 +1012,9 @@ export default async function seedDemoData({ container }: ExecArgs) {
             {
               id: defaultSalesChannel[0].id,
             },
+            {
+              id: b2bSalesChannel[0].id,
+            },
           ],
         },
       ],
@@ -1034,5 +1072,62 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info(
     `Created collection: ${collections[0].title} with ${products.length} products`
+  );
+
+  logger.info("Seeding customer groups and wholesale pricing...");
+  const { result: customerGroups } = await createCustomerGroupsWorkflow(
+    container
+  ).run({
+    input: {
+      customersData: [
+        {
+          name: "Retail",
+          metadata: { channel: "b2c" },
+        },
+        {
+          name: "Wholesale",
+          metadata: { channel: "b2b" },
+        },
+      ],
+    },
+  });
+
+  const wholesaleGroup = customerGroups.find(
+    (group) => group.name === "Wholesale"
+  );
+
+  const wholesalePrices = products.flatMap((product) =>
+    (product.variants ?? []).flatMap((variant) =>
+      ((variant as { prices?: { amount: number; currency_code: string }[] }).prices ?? []).map(
+        (price) => ({
+          variant_id: variant.id,
+          currency_code: price.currency_code,
+          amount: Math.round(Number(price.amount) * 0.8),
+        })
+      )
+    )
+  );
+
+  if (wholesaleGroup && wholesalePrices.length) {
+    await createPriceListsWorkflow(container).run({
+      input: {
+        price_lists_data: [
+          {
+            title: "Wholesale",
+            description:
+              "Negotiated B2B pricing for the Wholesale customer group.",
+            status: "active",
+            rules: {
+              customer_group_id: [wholesaleGroup.id],
+            },
+            prices: wholesalePrices,
+          },
+        ],
+      },
+    });
+  }
+
+  logger.info(
+    "Finished seeding B2B sales channel, customer groups, and wholesale price list."
   );
 }
