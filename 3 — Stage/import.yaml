@@ -1,15 +1,17 @@
-#yamlPreprocessor=on
+#zeropsPreprocessor=on
 # yaml-language-server: $schema=https://api.app-prg1.zerops.io/api/rest/public/settings/import-project-yaml-json-schema.json
-#
-# Standalone demo copy (same topology as `3 — Stage`).
-# Six-environment imports: `0 — AI Agent` … `5 — Highly-available Production`.
-# Canonical catalog copies: https://github.com/zeropsio/recipes/tree/main/medusa
-#
-# Project value store: APP_URL / API_URL (and SEARCH_URL) are mapped to Medusa /
-# Next.js keys in each app's zerops.yml. Do not put framework keys on services.
 
+# Stage environment — same topology as Small Production on cheaper
+# data profiles (hobby Postgres + hobby Valkey). One container per
+# app; app RAM stays at the Medusa / Next.js floors so QA does not
+# OOM while still costing less than oltp-staging entry prod.
+#
+# Project envVariables are a value store. Each app's zerops.yml maps:
+#   APP_URL  → STOREFRONT_URL / NEXT_PUBLIC_BASE_URL / CORS
+#   API_URL  → BACKEND_URL / ADMIN_CORS / MEDUSA_BACKEND_URL
+#   SEARCH_URL → NEXT_PUBLIC_SEARCH_ENDPOINT
 project:
-  name: recipe-medusa
+  name: medusa-stage
   envVariables:
     APP_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
     API_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
@@ -39,6 +41,7 @@ project:
 services:
   - hostname: db
     type: postgresql:single@17
+    # Rehearsal — oltp-hobby (~0.5 GB), lighter than small prod.
     profile: oltp-hobby
     priority: 10
 
@@ -60,6 +63,7 @@ services:
 
   - hostname: medusa
     type: nodejs@22
+    priority: 5
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true
@@ -69,10 +73,10 @@ services:
     verticalAutoscaling:
       minRam: 1
       minFreeRamGB: 0.5
-    priority: 5
 
   - hostname: nextstore
     type: nodejs@22
+    priority: 5
     zeropsSetup: nextstore
     buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
@@ -81,4 +85,3 @@ services:
     verticalAutoscaling:
       minRam: 0.5
       minFreeRamGB: 0.25
-    priority: 5

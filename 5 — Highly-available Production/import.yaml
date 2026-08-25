@@ -1,15 +1,18 @@
-#yamlPreprocessor=on
+#zeropsPreprocessor=on
 # yaml-language-server: $schema=https://api.app-prg1.zerops.io/api/rest/public/settings/import-project-yaml-json-schema.json
-#
-# Standalone demo copy (same topology as `3 — Stage`).
-# Six-environment imports: `0 — AI Agent` … `5 — Highly-available Production`.
-# Canonical catalog copies: https://github.com/zeropsio/recipes/tree/main/medusa
-#
-# Project value store: APP_URL / API_URL (and SEARCH_URL) are mapped to Medusa /
-# Next.js keys in each app's zerops.yml. Do not put framework keys on services.
 
+# Highly-available production — SERIOUS core required for `:ha@`
+# managed services. Demo DB stays oltp-staging (not oltp-production
+# ~4 GB). Meilisearch has no HA type — one search node. Shared CPU
+# on the apps keeps the HA demo below dedicated-core showcase cost.
+#
+# Project envVariables are a value store. Each app's zerops.yml maps:
+#   APP_URL  → STOREFRONT_URL / NEXT_PUBLIC_BASE_URL / CORS
+#   API_URL  → BACKEND_URL / ADMIN_CORS / MEDUSA_BACKEND_URL
+#   SEARCH_URL → NEXT_PUBLIC_SEARCH_ENDPOINT
 project:
-  name: recipe-medusa
+  name: medusa-ha-prod
+  corePackage: SERIOUS
   envVariables:
     APP_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
     API_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
@@ -38,47 +41,57 @@ project:
 
 services:
   - hostname: db
-    type: postgresql:single@17
-    profile: oltp-hobby
+    type: postgresql:ha@17
+    profile: oltp-staging
     priority: 10
 
+  # HA Valkey — 3-node cluster; client ports stay on hostname
+  # `redis` through failover. Profile only (no duplicate autoscaling).
   - hostname: redis
-    type: valkey:single@7.2
-    profile: hobby
+    type: valkey:ha@7.2
+    profile: staging
     priority: 10
 
+  # Single-node search — Meilisearch does not cluster on Zerops.
+  # 1 GB floor absorbs a larger product index than the seed catalog.
   - hostname: search
     type: meilisearch@1.10
     enableSubdomainAccess: true
     priority: 10
+    verticalAutoscaling:
+      minRam: 1
 
   - hostname: storage
     type: object-storage
-    objectStorageSize: 2
+    objectStorageSize: 10
     objectStoragePolicy: public-read
     priority: 10
 
+  # Two backend replicas so rolling deploys keep /health and /app
+  # up. Shared CPU; RAM stays at the Medusa floor.
   - hostname: medusa
     type: nodejs@22
+    priority: 5
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true
+    minContainers: 2
     envSecrets:
       SUPERADMIN_EMAIL: admin@example.com
       SUPERADMIN_PASSWORD: s4lt_<@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 1
       minFreeRamGB: 0.5
-    priority: 5
 
   - hostname: nextstore
     type: nodejs@22
+    priority: 5
     zeropsSetup: nextstore
     buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
+    minContainers: 2
     envSecrets:
       REVALIDATE_SECRET: <@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
       minFreeRamGB: 0.25
-    priority: 5

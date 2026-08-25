@@ -1,15 +1,18 @@
-#yamlPreprocessor=on
+#zeropsPreprocessor=on
 # yaml-language-server: $schema=https://api.app-prg1.zerops.io/api/rest/public/settings/import-project-yaml-json-schema.json
-#
-# Standalone demo copy (same topology as `3 — Stage`).
-# Six-environment imports: `0 — AI Agent` … `5 — Highly-available Production`.
-# Canonical catalog copies: https://github.com/zeropsio/recipes/tree/main/medusa
-#
-# Project value store: APP_URL / API_URL (and SEARCH_URL) are mapped to Medusa /
-# Next.js keys in each app's zerops.yml. Do not put framework keys on services.
 
+# AI Agent environment — production Medusa + Next.js setups plus
+# hobby data services. The app repos have no idle `setup: dev`;
+# hostnames stay `medusa` / `nextstore` so the storefront can read
+# ${medusa_CHANNEL_PUBLISHABLE_KEY} after seed.
+#
+# Project envVariables are a value store. Each app's zerops.yml maps:
+#   APP_URL  → STOREFRONT_URL / NEXT_PUBLIC_BASE_URL / CORS
+#   API_URL  → BACKEND_URL / ADMIN_CORS / MEDUSA_BACKEND_URL
+#   SEARCH_URL → NEXT_PUBLIC_SEARCH_ENDPOINT
+# Aliases NEXT_STORE_URL / MEDUSA_INSTANCE_URL match older recipe buttons.
 project:
-  name: recipe-medusa
+  name: medusa-agent
   envVariables:
     APP_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
     API_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
@@ -37,29 +40,44 @@ project:
     POSTHOG_EVENTS_API_KEY: ""
 
 services:
+  # Data plane first so Medusa migrate / seed can connect on boot.
   - hostname: db
     type: postgresql:single@17
     profile: oltp-hobby
     priority: 10
 
+  # Hobby Valkey — sessions, Caching Module, event bus, workflow
+  # engine, and locking share this one instance. Profile only;
+  # do not duplicate RAM in verticalAutoscaling.
   - hostname: redis
     type: valkey:single@7.2
     profile: hobby
     priority: 10
 
+  # Single-node Meilisearch for the in-repo product index. Subdomain
+  # access lets the storefront's NEXT_PUBLIC_SEARCH_ENDPOINT reach
+  # :7700 from the browser.
   - hostname: search
     type: meilisearch@1.10
     enableSubdomainAccess: true
     priority: 10
 
+  # Public-read MinIO — product images are requested from the
+  # storefront and admin without signed URLs. 2 GB covers the seed
+  # catalog; bump objectStorageSize when uploads grow.
   - hostname: storage
     type: object-storage
     objectStorageSize: 2
     objectStoragePolicy: public-read
     priority: 10
 
+  # Medusa admin + Store / Admin API. 1 GB + 0.5 GB free is the
+  # proven floor (admin UI + workflows). Superadmin is a service
+  # secret so it is not in the project value store. zeropsSetup
+  # must match `- setup: medusa` in recipe-medusa/zerops.yml.
   - hostname: medusa
     type: nodejs@22
+    priority: 5
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true
@@ -69,10 +87,13 @@ services:
     verticalAutoscaling:
       minRam: 1
       minFreeRamGB: 0.5
-    priority: 5
 
+  # Official Next.js storefront. 0.5 GB + 0.25 GB free is the SSR
+  # floor. REVALIDATE_SECRET stays on the service. Hostname must
+  # stay `nextstore` so APP_URL (port 8000) matches zerops.yml.
   - hostname: nextstore
     type: nodejs@22
+    priority: 5
     zeropsSetup: nextstore
     buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
@@ -81,4 +102,3 @@ services:
     verticalAutoscaling:
       minRam: 0.5
       minFreeRamGB: 0.25
-    priority: 5
