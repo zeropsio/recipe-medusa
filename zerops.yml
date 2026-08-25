@@ -45,11 +45,12 @@ zerops:
         MINIO_ENDPOINT: ${storage_apiUrl}
         MINIO_SECRET_KEY: ${storage_secretAccessKey}
         MINIO_ACCESS_KEY: ${storage_accessKeyId}
-        REDIS_URL: redis://${redis_hostname}:6379
-        CACHE_REDIS_URL: redis://${redis_hostname}:6379
-        EVENTS_REDIS_URL: redis://${redis_hostname}:6379
-        WE_REDIS_URL: redis://${redis_hostname}:6379
-        LOCKING_REDIS_URL: redis://${redis_hostname}:6379
+        # connectionString includes the Valkey password (required on new services).
+        REDIS_URL: ${redis_connectionString}
+        CACHE_REDIS_URL: ${redis_connectionString}
+        EVENTS_REDIS_URL: ${redis_connectionString}
+        WE_REDIS_URL: ${redis_connectionString}
+        LOCKING_REDIS_URL: ${redis_connectionString}
         MEILISEARCH_HOST: http://${search_hostname}:${search_port}
         MEILISEARCH_API_KEY: ${search_masterKey}
         MEILISEARCH_PRODUCT_INDEX_NAME: products

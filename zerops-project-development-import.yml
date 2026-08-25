@@ -1,20 +1,20 @@
 #yamlPreprocessor=on
 # yaml-language-server: $schema=https://api.app-prg1.zerops.io/api/rest/public/settings/import-project-yaml-json-schema.json
 #
+# Standalone demo copy. Canonical six-environment imports live in
+# https://github.com/zeropsio/recipes/tree/main/medusa
+#
 # Project value store: APP_URL / API_URL (and SEARCH_URL) are mapped to Medusa /
 # Next.js keys in each app's zerops.yml. Do not put framework keys on services.
 
 project:
   name: recipe-medusa
-  corePackage: LIGHT
   envVariables:
     APP_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
     API_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
-    # Aliases kept for existing recipe buttons and the Analog storefront CORS list.
     NEXT_STORE_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
     MEDUSA_INSTANCE_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
     SEARCH_URL: https://search-${zeropsSubdomainHost}-7700.prg1.zerops.app
-    IMGPROXY_INSTANCE_URL: https://imgproxy-${zeropsSubdomainHost}.prg1.zerops.app
     ANALOG_STORE_URL: ""
     SMTP_HOST: ""
     SMTP_PORT: "587"
@@ -34,27 +34,21 @@ project:
     GITHUB_CLIENT_ID: ""
     GITHUB_CLIENT_SECRET: ""
     POSTHOG_EVENTS_API_KEY: ""
-  tags:
-    - zerops-recipe
-    - development
 
 services:
-  # Managed data plane first so Medusa can migrate and connect on boot.
   - hostname: db
     type: postgresql:single@17
-    mode: NON_HA
     profile: oltp-hobby
+    priority: 10
+
+  - hostname: redis
+    type: valkey:single@7.2
+    profile: hobby
     priority: 10
 
   - hostname: search
     type: meilisearch@1.10
-    mode: NON_HA
     enableSubdomainAccess: true
-    priority: 10
-
-  - hostname: redis
-    type: valkey@7.2
-    mode: NON_HA
     priority: 10
 
   - hostname: storage
@@ -68,14 +62,13 @@ services:
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true
-    # Superadmin is a service secret. ADMIN_CORS is mapped in zerops.yml from API_URL.
     envSecrets:
       SUPERADMIN_EMAIL: admin@example.com
       SUPERADMIN_PASSWORD: s4lt_<@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 1
       minFreeRamGB: 0.5
-    priority: 1
+    priority: 5
 
   - hostname: nextstore
     type: nodejs@22
@@ -87,4 +80,4 @@ services:
     verticalAutoscaling:
       minRam: 0.5
       minFreeRamGB: 0.25
-    priority: 1
+    priority: 5
