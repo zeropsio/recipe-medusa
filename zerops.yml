@@ -40,7 +40,7 @@ zerops:
         ADMIN_CORS: ${API_URL},http://localhost:5173,http://localhost:9000
         AUTH_CORS: ${APP_URL},${API_URL},http://localhost:8000,http://localhost:5173,http://localhost:9000
         # Zerops Postgres uses the hostname as the database name.
-        DATABASE_URL: postgresql://${db_user}:${db_password}@${db_hostname}:5432/${db_hostname}?ssl_mode=disable
+        DATABASE_URL: postgresql://${db_user}:${db_password}@${db_hostname}:5432/${db_hostname}?sslmode=disable
         MINIO_BUCKET: ${storage_bucketName}
         MINIO_ENDPOINT: ${storage_apiUrl}
         MINIO_SECRET_KEY: ${storage_secretAccessKey}
