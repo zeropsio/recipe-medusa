@@ -1,59 +1,90 @@
 #yamlPreprocessor=on
+# yaml-language-server: $schema=https://api.app-prg1.zerops.io/api/rest/public/settings/import-project-yaml-json-schema.json
+#
+# Project value store: APP_URL / API_URL (and SEARCH_URL) are mapped to Medusa /
+# Next.js keys in each app's zerops.yml. Do not put framework keys on services.
+
 project:
   name: recipe-medusa
   corePackage: LIGHT
   envVariables:
+    APP_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
+    API_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
+    # Aliases kept for existing recipe buttons and the Analog storefront CORS list.
     NEXT_STORE_URL: https://nextstore-${zeropsSubdomainHost}-8000.prg1.zerops.app
-    SEARCH_URL: https://search-${zeropsSubdomainHost}-7700.prg1.zerops.app
     MEDUSA_INSTANCE_URL: https://medusa-${zeropsSubdomainHost}-9000.prg1.zerops.app
+    SEARCH_URL: https://search-${zeropsSubdomainHost}-7700.prg1.zerops.app
     IMGPROXY_INSTANCE_URL: https://imgproxy-${zeropsSubdomainHost}.prg1.zerops.app
+    ANALOG_STORE_URL: ""
+    SMTP_HOST: ""
+    SMTP_PORT: "587"
+    SMTP_FROM: ""
+    SMTP_SECURE: "false"
+    POSTHOG_HOST: ""
+    STRIPE_PUBLISHABLE_KEY: ""
+  envSecrets:
+    COOKIE_SECRET: <@generateRandomString(<32>)>
+    JWT_SECRET: <@generateRandomString(<32>)>
+    SMTP_USER: ""
+    SMTP_PASS: ""
+    STRIPE_API_KEY: ""
+    STRIPE_WEBHOOK_SECRET: ""
+    GOOGLE_CLIENT_ID: ""
+    GOOGLE_CLIENT_SECRET: ""
+    GITHUB_CLIENT_ID: ""
+    GITHUB_CLIENT_SECRET: ""
+    POSTHOG_EVENTS_API_KEY: ""
   tags:
     - zerops-recipe
     - development
 
 services:
+  # Managed data plane first so Medusa can migrate and connect on boot.
   - hostname: db
-    type: postgresql@16
+    type: postgresql:single@17
     mode: NON_HA
-    priority: 100
+    profile: oltp-hobby
+    priority: 10
 
   - hostname: search
     type: meilisearch@1.10
     mode: NON_HA
     enableSubdomainAccess: true
-    priority: 100
+    priority: 10
 
   - hostname: redis
     type: valkey@7.2
     mode: NON_HA
-    priority: 100
+    priority: 10
 
   - hostname: storage
     type: object-storage
     objectStorageSize: 2
     objectStoragePolicy: public-read
-    priority: 100
+    priority: 10
 
   - hostname: medusa
     type: nodejs@22
+    zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true
+    # Superadmin is a service secret. ADMIN_CORS is mapped in zerops.yml from API_URL.
     envSecrets:
-      ADMIN_CORS: ${zeropsSubdomain}
-      COOKIE_SECRET: <@generateRandomString(<32>)>
-      JWT_SECRET: <@generateRandomString(<32>)>
       SUPERADMIN_EMAIL: admin@example.com
       SUPERADMIN_PASSWORD: s4lt_<@generateRandomString(<16>)>
     verticalAutoscaling:
-      minRam: 0.5
-      cpu: 1
-    priority: 90
+      minRam: 1
+      minFreeRamGB: 0.5
+    priority: 1
 
   - hostname: nextstore
     type: nodejs@22
+    zeropsSetup: nextstore
     buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
     envSecrets:
       REVALIDATE_SECRET: <@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
+      minFreeRamGB: 0.25
+    priority: 1
