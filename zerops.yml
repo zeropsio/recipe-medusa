@@ -33,6 +33,7 @@ zerops:
       envVariables:
         DATABASE_TYPE: postgres
         NODE_ENV: production
+        MEDUSA_DISABLE_TELEMETRY: "true"
         MEDUSA_FF_CACHING: "true"
         BACKEND_URL: ${API_URL}
         STOREFRONT_URL: ${APP_URL}
