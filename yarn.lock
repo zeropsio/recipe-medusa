@@ -2899,6 +2899,18 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
+"@posthog/core@^1.48.11":
+  version "1.48.11"
+  resolved "https://registry.yarnpkg.com/@posthog/core/-/core-1.48.11.tgz#cc4bf2518a53eedd8ca44faf26ab09690db4feb5"
+  integrity sha512-fvKbxGaUM8RuCDB1jdhSqAHYjk42INfJDWT1KVezn74sCrfnr1YaUafxzmcS+87D5FzbA2tu7IT0GQRV2WkkRg==
+  dependencies:
+    "@posthog/types" "^1.405.3"
+
+"@posthog/types@^1.405.3":
+  version "1.406.2"
+  resolved "https://registry.yarnpkg.com/@posthog/types/-/types-1.406.2.tgz#362ee2707ca6382bc48de815a4d0788b29c6a36f"
+  integrity sha512-RNNoKD7+ZD2v5uzIDp1SOKK1CseZ+YgNPRYCoPlVKuu+wTB/Tb41JCprMjX9E24gPcsdDg8B47dsEsmO0nwEfw==
+
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
@@ -9431,6 +9443,13 @@ postgres-interval@^1.1.0:
   integrity sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==
   dependencies:
     xtend "^4.0.0"
+
+posthog-node@5.51.2:
+  version "5.51.2"
+  resolved "https://registry.yarnpkg.com/posthog-node/-/posthog-node-5.51.2.tgz#102a48921d0e3815252381e4eeb843a2f5abc678"
+  integrity sha512-K+aQnqyHEtx2O5YmjxByh3WnXXMsrAisW0hNSXwejM4v7cngrbqoA6rZevMSyaXNqx9xhBedTxz0orb1Xwxyew==
+  dependencies:
+    "@posthog/core" "^1.48.11"
 
 pretty-format@^29.0.0, pretty-format@^29.7.0:
   version "29.7.0"
