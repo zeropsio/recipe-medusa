@@ -7,6 +7,9 @@ import {
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
+/** Empty or whitespace-only secrets stay off — Zerops may inject "". */
+const envEnabled = (value: string | undefined) => Boolean(value?.trim())
+
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379"
 const CACHE_REDIS_URL = process.env.CACHE_REDIS_URL || REDIS_URL
 const EVENTS_REDIS_URL = process.env.EVENTS_REDIS_URL || REDIS_URL
@@ -151,7 +154,7 @@ const modules: Record<string, unknown>[] = [
     resolve: "@medusajs/medusa/analytics",
     options: {
       providers: [
-        process.env.POSTHOG_EVENTS_API_KEY
+        envEnabled(process.env.POSTHOG_EVENTS_API_KEY)
           ? {
               resolve: "@medusajs/medusa/analytics-posthog",
               id: "posthog",
@@ -169,7 +172,7 @@ const modules: Record<string, unknown>[] = [
   },
 ]
 
-if (process.env.STRIPE_API_KEY) {
+if (envEnabled(process.env.STRIPE_API_KEY)) {
   modules.push({
     resolve: "@medusajs/medusa/payment",
     options: {
@@ -194,7 +197,7 @@ const authProviders: Record<string, unknown>[] = [
   },
 ]
 
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+if (envEnabled(process.env.GOOGLE_CLIENT_ID) && envEnabled(process.env.GOOGLE_CLIENT_SECRET)) {
   authProviders.push({
     resolve: "@medusajs/medusa/auth-google",
     id: "google",
@@ -208,7 +211,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   })
 }
 
-if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+if (envEnabled(process.env.GITHUB_CLIENT_ID) && envEnabled(process.env.GITHUB_CLIENT_SECRET)) {
   authProviders.push({
     resolve: "@medusajs/medusa/auth-github",
     id: "github",

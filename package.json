@@ -27,8 +27,8 @@
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
-    "migrate": "medusa db:migrate",
-    "syncLinks": "medusa db:sync-links",
+    "migrate": "medusa db:migrate --execute-all-links",
+    "syncLinks": "medusa db:sync-links --execute-all",
     "createInitialSuperadmin": "medusa user -e \"$SUPERADMIN_EMAIL\" -p \"$SUPERADMIN_PASSWORD\"",
     "seedInitialData": "medusa exec ./src/scripts/seed.js",
     "addInitialSearchDocuments": "medusa exec ./src/scripts/search-index.js",
@@ -48,6 +48,7 @@
     "meilisearch": "0.60.0",
     "nodemailer": "9.0.5",
     "pg": "8.16.3",
+    "posthog-node": "5.51.2",
     "zod": "4.2.0"
   },
   "devDependencies": {

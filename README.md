@@ -21,18 +21,22 @@ Medusa v2.19 commerce backend plus a Next.js App Router storefront on Zerops. Th
 | Next.js storefront | [zeropsio/recipe-medusa-nextstore](https://github.com/zeropsio/recipe-medusa-nextstore) | `8000` |
 | Analog.js storefront (optional) | separate recipe | — |
 
-## Medusa.js + Next.js ecommerce starter
+⬇️ **Full recipe page and deploy with one-click**
 
-### Development / non highly available variant
-[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/medusa-next-devel)
+[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/light/deploy-button.svg)](https://app.zerops.io/recipes/medusa?environment=small-production)
 
-### Production / highly available variant
-[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/medusa-next-prod)
+Offered in examples for the whole development lifecycle — from environments for AI agents like [Claude Code](https://www.anthropic.com/claude-code) or [opencode](https://opencode.ai) through environments for remote (CDE) or local development of each developer to stage and productions of all sizes.
 
-## Medusa.js + Analog.js + spartan.ng ecommerce starter
+- **AI agent** [[info]](/0%20—%20AI%20Agent) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=ai-agent)
+- **Remote (CDE)** [[info]](/1%20—%20Remote%20(CDE)) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=remote-cde)
+- **Local** [[info]](/2%20—%20Local) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=local)
+- **Stage** [[info]](/3%20—%20Stage) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=stage)
+- **Small Production** [[info]](/4%20—%20Small%20Production) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=small-production)
+- **Highly-available Production** [[info]](/5%20—%20Highly-available%20Production) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=highly-available-production)
 
-### Development / non highly available variant (with Next.js storefront service for reference)
-[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/green/deploy-button.svg)](https://app.zerops.io/recipe/medusa-analog-devel)
+Each folder is an `import.yaml` you can paste in the Zerops UI. Canonical copies also live in [zeropsio/recipes/medusa](https://github.com/zeropsio/recipes/tree/main/medusa).
+
+The Analog.js storefront remains a [separate recipe](https://app.zerops.io/recipe/medusa-analog-devel).
 
 ## Local backend
 

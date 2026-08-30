@@ -33,6 +33,7 @@ zerops:
       envVariables:
         DATABASE_TYPE: postgres
         NODE_ENV: production
+        MEDUSA_DISABLE_TELEMETRY: "true"
         MEDUSA_FF_CACHING: "true"
         BACKEND_URL: ${API_URL}
         STOREFRONT_URL: ${APP_URL}
@@ -40,16 +41,17 @@ zerops:
         ADMIN_CORS: ${API_URL},http://localhost:5173,http://localhost:9000
         AUTH_CORS: ${APP_URL},${API_URL},http://localhost:8000,http://localhost:5173,http://localhost:9000
         # Zerops Postgres uses the hostname as the database name.
-        DATABASE_URL: postgresql://${db_user}:${db_password}@${db_hostname}:5432/${db_hostname}?ssl_mode=disable
+        DATABASE_URL: postgresql://${db_user}:${db_password}@${db_hostname}:5432/${db_hostname}?sslmode=disable
         MINIO_BUCKET: ${storage_bucketName}
         MINIO_ENDPOINT: ${storage_apiUrl}
         MINIO_SECRET_KEY: ${storage_secretAccessKey}
         MINIO_ACCESS_KEY: ${storage_accessKeyId}
-        REDIS_URL: redis://${redis_hostname}:6379
-        CACHE_REDIS_URL: redis://${redis_hostname}:6379
-        EVENTS_REDIS_URL: redis://${redis_hostname}:6379
-        WE_REDIS_URL: redis://${redis_hostname}:6379
-        LOCKING_REDIS_URL: redis://${redis_hostname}:6379
+        # connectionString includes the Valkey password (required on new services).
+        REDIS_URL: ${redis_connectionString}
+        CACHE_REDIS_URL: ${redis_connectionString}
+        EVENTS_REDIS_URL: ${redis_connectionString}
+        WE_REDIS_URL: ${redis_connectionString}
+        LOCKING_REDIS_URL: ${redis_connectionString}
         MEILISEARCH_HOST: http://${search_hostname}:${search_port}
         MEILISEARCH_API_KEY: ${search_masterKey}
         MEILISEARCH_PRODUCT_INDEX_NAME: products
