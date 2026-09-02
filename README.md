@@ -7,6 +7,23 @@ Medusa v2.19 commerce backend plus a Next.js App Router storefront on Zerops. Th
 > [!CAUTION]
 > Experimental recipe
 
+## Deploy to Zerops
+
+You can either click the deploy button to deploy directly on Zerops, or manually copy an [`import.yaml`](.zerops-recipe/3%20—%20Stage/import.yaml) from [`.zerops-recipe/`](.zerops-recipe/) into the import dialog in the Zerops app. For a quick single-environment import, use [`.zerops-recipe/zerops-project-development-import.yml`](.zerops-recipe/zerops-project-development-import.yml) (same topology as Stage).
+
+[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/light/deploy-button.svg)](https://app.zerops.io/recipes/medusa?environment=small-production)
+
+Offered in examples for the whole development lifecycle — from environments for AI agents like [Claude Code](https://www.anthropic.com/claude-code) or [opencode](https://opencode.ai) through environments for remote (CDE) or local development of each developer to stage and productions of all sizes.
+
+- **AI agent** [[info]](.zerops-recipe/0%20—%20AI%20Agent) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=ai-agent)
+- **Remote (CDE)** [[info]](.zerops-recipe/1%20—%20Remote%20(CDE)) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=remote-cde)
+- **Local** [[info]](.zerops-recipe/2%20—%20Local) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=local)
+- **Stage** [[info]](.zerops-recipe/3%20—%20Stage) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=stage)
+- **Small Production** [[info]](.zerops-recipe/4%20—%20Small%20Production) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=small-production)
+- **Highly-available Production** [[info]](.zerops-recipe/5%20—%20Highly-available%20Production) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=highly-available-production)
+
+Each folder under [`.zerops-recipe/`](.zerops-recipe/) contains an `import.yaml` you can paste in the Zerops UI. Canonical copies also live in [zeropsio/recipes/medusa](https://github.com/zeropsio/recipes/tree/main/medusa).
+
 ## Requirements
 
 - Node.js `^20.19.0` or `>=22.12.0`
@@ -20,21 +37,6 @@ Medusa v2.19 commerce backend plus a Next.js App Router storefront on Zerops. Th
 | Medusa backend + admin | this repo | `9000` |
 | Next.js storefront | [zeropsio/recipe-medusa-nextstore](https://github.com/zeropsio/recipe-medusa-nextstore) | `8000` |
 | Analog.js storefront (optional) | separate recipe | — |
-
-⬇️ **Full recipe page and deploy with one-click**
-
-[![Deploy on Zerops](https://github.com/zeropsio/recipe-shared-assets/blob/main/deploy-button/light/deploy-button.svg)](https://app.zerops.io/recipes/medusa?environment=small-production)
-
-Offered in examples for the whole development lifecycle — from environments for AI agents like [Claude Code](https://www.anthropic.com/claude-code) or [opencode](https://opencode.ai) through environments for remote (CDE) or local development of each developer to stage and productions of all sizes.
-
-- **AI agent** [[info]](/0%20—%20AI%20Agent) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=ai-agent)
-- **Remote (CDE)** [[info]](/1%20—%20Remote%20(CDE)) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=remote-cde)
-- **Local** [[info]](/2%20—%20Local) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=local)
-- **Stage** [[info]](/3%20—%20Stage) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=stage)
-- **Small Production** [[info]](/4%20—%20Small%20Production) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=small-production)
-- **Highly-available Production** [[info]](/5%20—%20Highly-available%20Production) — [[deploy with one click]](https://app.zerops.io/recipes/medusa?environment=highly-available-production)
-
-Each folder is an `import.yaml` you can paste in the Zerops UI. Canonical copies also live in [zeropsio/recipes/medusa](https://github.com/zeropsio/recipes/tree/main/medusa).
 
 The Analog.js storefront remains a [separate recipe](https://app.zerops.io/recipe/medusa-analog-devel).
 
@@ -78,6 +80,8 @@ The first deploy creates:
 - Demo products, shipping, and a publishable API key
 
 Full company / quote B2B (employees, spend limits) is the separate [Medusa B2B starter](https://github.com/medusajs/b2b-starter), not this recipe.
+
+Need help setting your project up? Join the [Zerops Discord community](https://discord.gg/zeropsio).
 
 <!-- #ZEROPS_EXTRACT_START:integration-guide# -->
 ## Integration Guide

@@ -1,8 +1,8 @@
 #yamlPreprocessor=on
 # yaml-language-server: $schema=https://api.app-prg1.zerops.io/api/rest/public/settings/import-project-yaml-json-schema.json
 #
-# Standalone demo copy (same topology as `3 — Stage`).
-# Six-environment imports: `0 — AI Agent` … `5 — Highly-available Production`.
+# Standalone demo copy (same topology as `.zerops-recipe/3 — Stage`).
+# Six-environment imports live under `.zerops-recipe/0 — AI Agent` … `5 — Highly-available Production`.
 # Canonical catalog copies: https://github.com/zeropsio/recipes/tree/main/medusa
 #
 # Project value store: APP_URL / API_URL (and SEARCH_URL) are mapped to Medusa /

@@ -14,7 +14,7 @@ Medusa v2.19 commerce backend + admin on Zerops (`nodejs@22`, Yarn 1.22). Pair w
   - `nextstore` — Next.js SSR storefront (other Git repo, port 8000)
 - Runtime base: `nodejs@22`
 
-Pipeline: [`zerops.yml`](zerops.yml). Environment imports (0–5, same as the recipes catalog): [`0 — AI Agent`](0%20—%20AI%20Agent) through [`5 — Highly-available Production`](5%20—%20Highly-available%20Production). Standalone demo copy: [`zerops-project-development-import.yml`](zerops-project-development-import.yml).
+Pipeline: [`zerops.yml`](zerops.yml). Environment imports (0–5, same as the recipes catalog): [`.zerops-recipe/0 — AI Agent`](.zerops-recipe/0%20—%20AI%20Agent) through [`.zerops-recipe/5 — Highly-available Production`](.zerops-recipe/5%20—%20Highly-available%20Production). Standalone demo copy: [`.zerops-recipe/zerops-project-development-import.yml`](.zerops-recipe/zerops-project-development-import.yml).
 
 ## Zerops dev
 
