@@ -87,7 +87,6 @@
     "glob": "10.5.0",
     "browserslist": "4.28.7",
     "immutable": "4.3.9",
-    "path-to-regexp": "0.1.13",
     "@babel/helpers": "7.27.0",
     "@babel/runtime": "7.27.0",
     "jest/minimatch": "3.1.4",
@@ -98,6 +97,7 @@
     "@istanbuljs/load-nyc-config/js-yaml": "3.15.1",
     "@medusajs/**/minimatch": "9.0.7",
     "@medusajs/**/brace-expansion": "2.0.2",
+    "express/path-to-regexp": "0.1.13",
     "tmp": "0.2.7"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
