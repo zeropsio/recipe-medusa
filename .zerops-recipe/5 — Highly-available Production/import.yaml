@@ -71,7 +71,7 @@ services:
   # up. Shared CPU; RAM stays at the Medusa floor.
   - hostname: medusa
     type: nodejs@22
-    priority: 5
+    priority: 6
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true

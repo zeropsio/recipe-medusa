@@ -80,7 +80,8 @@ zerops:
         # Demo catalog and admin user are created once per service lifetime.
         - zsc execOnce createInitialSuperadmin -- yarn createInitialSuperadmin
         - zsc execOnce seedInitialData -- yarn seedInitialData
-        - zsc execOnce syncPublishableKey -- yarn setInitialPublishableKey
+        # Re-sync the publishable key on every deploy (idempotent; nextstore reads medusa_CHANNEL_PUBLISHABLE_KEY).
+        - yarn setInitialPublishableKey
         - zsc execOnce addInitialSearchDocuments -- yarn addInitialSearchDocuments
       ports:
         - port: 9000

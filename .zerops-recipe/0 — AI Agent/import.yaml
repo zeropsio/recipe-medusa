@@ -77,7 +77,7 @@ services:
   # must match `- setup: medusa` in recipe-medusa/zerops.yml.
   - hostname: medusa
     type: nodejs@22
-    priority: 5
+    priority: 6
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true

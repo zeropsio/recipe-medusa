@@ -69,7 +69,7 @@ services:
     verticalAutoscaling:
       minRam: 1
       minFreeRamGB: 0.5
-    priority: 5
+    priority: 6
 
   - hostname: nextstore
     type: nodejs@22

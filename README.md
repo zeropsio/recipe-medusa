@@ -67,7 +67,7 @@ Admin is at `http://localhost:9000/app`. Copy `.env.template` and set `DATABASE_
 | `MINIO_*` | S3-compatible object storage |
 | `MEILISEARCH_HOST` / `MEILISEARCH_API_KEY` / `MEILISEARCH_PRODUCT_INDEX_NAME` | Product search (in-repo Meilisearch module; empty host skips indexing) |
 
-Publishable API keys created by seed are written to `CHANNEL_PUBLISHABLE_KEY` on first deploy and consumed by the Next.js storefront as `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`.
+Publishable API keys created by seed are written to `CHANNEL_PUBLISHABLE_KEY` on deploy and consumed by the Next.js storefront as `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` / `MEDUSA_PUBLISHABLE_KEY`. Deploy **medusa** before **nextstore** on first import (medusa has higher `priority` in import.yaml). If the storefront shows “A valid publishable key is required”, redeploy medusa then nextstore.
 
 ## Seed data
 

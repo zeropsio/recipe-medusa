@@ -64,7 +64,7 @@ services:
   # Framework floor — not a hello-world platform default.
   - hostname: medusa
     type: nodejs@22
-    priority: 5
+    priority: 6
     zeropsSetup: medusa
     buildFromGit: https://github.com/zeropsio/recipe-medusa
     enableSubdomainAccess: true
