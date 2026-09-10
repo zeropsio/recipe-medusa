@@ -73,7 +73,7 @@ zerops:
         GITHUB_CALLBACK_URL: ${APP_URL}/auth/github/callback
         POSTHOG_EVENTS_API_KEY: ${POSTHOG_EVENTS_API_KEY}
         POSTHOG_HOST: ${POSTHOG_HOST}
-        NEXTSTORE_RELOAD_SECRET: ${nextstore_REVALIDATE_SECRET}
+        NEXTSTORE_RELOAD_SECRET: ${RELOAD_SECRET}
       initCommands:
         # Schema and links can change on every Medusa deploy.
         - zsc execOnce ${appVersionId}_migration -- yarn migrate

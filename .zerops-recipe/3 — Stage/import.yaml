@@ -37,6 +37,7 @@ project:
     GITHUB_CLIENT_ID: ""
     GITHUB_CLIENT_SECRET: ""
     POSTHOG_EVENTS_API_KEY: ""
+    RELOAD_SECRET: <@generateRandomString(<16>)>
 
 services:
   - hostname: db
@@ -80,8 +81,6 @@ services:
     zeropsSetup: nextstore
     buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
-    envSecrets:
-      REVALIDATE_SECRET: <@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
       minFreeRamGB: 0.25
