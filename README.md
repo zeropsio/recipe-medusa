@@ -4,9 +4,6 @@
 Medusa v2.19 commerce backend plus a Next.js App Router storefront on Zerops. The stack includes PostgreSQL, Valkey, Meilisearch, MinIO object storage, optional SMTP notifications, Stripe, Google/GitHub login, analytics, translations, draft orders, and seed data for both B2C and B2B (sales channels, customer groups, and a wholesale price list).
 <!-- #ZEROPS_EXTRACT_END:intro# -->
 
-> [!CAUTION]
-> Experimental recipe
-
 ## Deploy to Zerops
 
 You can either click the deploy button to deploy directly on Zerops, or manually copy an [`import.yaml`](.zerops-recipe/3%20—%20Stage/import.yaml) from [`.zerops-recipe/`](.zerops-recipe/) into the import dialog in the Zerops app. For a quick single-environment import, use [`.zerops-recipe/zerops-project-development-import.yml`](.zerops-recipe/zerops-project-development-import.yml) (same topology as Stage).
