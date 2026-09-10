@@ -73,6 +73,7 @@ zerops:
         GITHUB_CALLBACK_URL: ${APP_URL}/auth/github/callback
         POSTHOG_EVENTS_API_KEY: ${POSTHOG_EVENTS_API_KEY}
         POSTHOG_HOST: ${POSTHOG_HOST}
+        NEXTSTORE_RELOAD_SECRET: ${RELOAD_SECRET}
       initCommands:
         # Schema and links can change on every Medusa deploy.
         - zsc execOnce ${appVersionId}_migration -- yarn migrate
@@ -82,6 +83,7 @@ zerops:
         - zsc execOnce seedInitialData -- yarn seedInitialData
         # Re-sync the publishable key on every deploy (idempotent; nextstore reads medusa_CHANNEL_PUBLISHABLE_KEY).
         - yarn setInitialPublishableKey
+        - yarn reloadNextstoreEnv
         - zsc execOnce addInitialSearchDocuments -- yarn addInitialSearchDocuments
       ports:
         - port: 9000

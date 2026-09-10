@@ -32,7 +32,8 @@
     "createInitialSuperadmin": "bash -c 'err=$(medusa user -e \"$SUPERADMIN_EMAIL\" -p \"$SUPERADMIN_PASSWORD\" 2>&1) || { echo \"$err\" >&2; echo \"$err\" | grep -qi \"already exists\"; }'",
     "seedInitialData": "medusa exec ./src/scripts/seed.js",
     "addInitialSearchDocuments": "medusa exec ./src/scripts/search-index.js",
-    "setInitialPublishableKey": "bash -c 'token=$(medusa exec ./src/scripts/output-publishable-key.js | grep -o \"<PK_TOKEN>.*</PK_TOKEN>\" | sed \"s/<PK_TOKEN>//g;s/<\\/PK_TOKEN>//g\" | tr -d \"\\n\\r\"); test -n \"$token\" || { echo \"No publishable key token extracted\" >&2; exit 1; }; zsc setEnv CHANNEL_PUBLISHABLE_KEY \"$token\" --sensitive'"
+    "setInitialPublishableKey": "bash -c 'token=$(medusa exec ./src/scripts/output-publishable-key.js | grep -o \"<PK_TOKEN>.*</PK_TOKEN>\" | sed \"s/<PK_TOKEN>//g;s/<\\/PK_TOKEN>//g\" | tr -d \"\\n\\r\"); test -n \"$token\" || { echo \"No publishable key token extracted\" >&2; exit 1; }; zsc setEnv CHANNEL_PUBLISHABLE_KEY \"$token\" --sensitive'",
+    "reloadNextstoreEnv": "bash -c 'test -n \"$NEXTSTORE_RELOAD_SECRET\" || exit 0; curl -sf --max-time 15 -X POST -H \"x-reload-secret: $NEXTSTORE_RELOAD_SECRET\" http://nextstore:8000/api/internal/reload-env || echo \"reloadNextstoreEnv: nextstore reload skipped (not running yet).\" >&2'"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.19.0",

@@ -38,6 +38,7 @@ project:
     GITHUB_CLIENT_ID: ""
     GITHUB_CLIENT_SECRET: ""
     POSTHOG_EVENTS_API_KEY: ""
+    RELOAD_SECRET: <@generateRandomString(<16>)>
 
 services:
   # Data plane first so Medusa migrate / seed can connect on boot.
@@ -89,7 +90,7 @@ services:
       minFreeRamGB: 0.5
 
   # Official Next.js storefront. 0.5 GB + 0.25 GB free is the SSR
-  # floor. REVALIDATE_SECRET stays on the service. Hostname must
+  # floor. RELOAD_SECRET is a project envSecret (medusa init POSTs reload-env). Hostname must
   # stay `nextstore` so APP_URL (port 8000) matches zerops.yml.
   - hostname: nextstore
     type: nodejs@22
@@ -97,8 +98,6 @@ services:
     zeropsSetup: nextstore
     buildFromGit: https://github.com/zeropsio/recipe-medusa-nextstore
     enableSubdomainAccess: true
-    envSecrets:
-      REVALIDATE_SECRET: <@generateRandomString(<16>)>
     verticalAutoscaling:
       minRam: 0.5
       minFreeRamGB: 0.25

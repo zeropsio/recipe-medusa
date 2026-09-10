@@ -4,9 +4,6 @@
 Medusa v2.19 commerce backend plus a Next.js App Router storefront on Zerops. The stack includes PostgreSQL, Valkey, Meilisearch, MinIO object storage, optional SMTP notifications, Stripe, Google/GitHub login, analytics, translations, draft orders, and seed data for both B2C and B2B (sales channels, customer groups, and a wholesale price list).
 <!-- #ZEROPS_EXTRACT_END:intro# -->
 
-> [!CAUTION]
-> Experimental recipe
-
 ## Deploy to Zerops
 
 You can either click the deploy button to deploy directly on Zerops, or manually copy an [`import.yaml`](.zerops-recipe/3%20—%20Stage/import.yaml) from [`.zerops-recipe/`](.zerops-recipe/) into the import dialog in the Zerops app. For a quick single-environment import, use [`.zerops-recipe/zerops-project-development-import.yml`](.zerops-recipe/zerops-project-development-import.yml) (same topology as Stage).
@@ -48,7 +45,39 @@ yarn
 yarn dev
 ```
 
-Admin is at `http://localhost:9000/app`. Copy `.env.template` and set `DATABASE_URL` plus Redis URLs. Leave `SMTP_HOST` empty to log transactional emails instead of sending them.
+Copy `.env.template` and set `DATABASE_URL` plus Redis URLs. Leave `SMTP_HOST` empty to log transactional emails instead of sending them.
+
+## Admin login
+
+Medusa Admin lives at **`/app`** on port `9000` (the Store API is the same host without that path). After first deploy, `yarn createInitialSuperadmin` creates the user once per service lifetime.
+
+| Where | Open |
+| --- | --- |
+| Local | [http://localhost:9000/app](http://localhost:9000/app) |
+| Zerops | `{API_URL}/app` — on the **medusa** service, use the public subdomain (port 9000), then go to `/app`. Signed-out users land on `/app/login`. |
+
+Sign in with **email + password** (the default provider; Google/GitHub are optional extras).
+
+| Field | Value |
+| --- | --- |
+| Email | `SUPERADMIN_EMAIL` — default `admin@example.com` |
+| Password | `SUPERADMIN_PASSWORD` |
+
+On Zerops those are **medusa service secrets**, not project env vars. Import sets the email to `admin@example.com` and generates the password (`s4lt_` plus a random suffix). In the Zerops UI: **medusa** service → environment / secrets → copy `SUPERADMIN_PASSWORD`. Locally they come from `.env` (template password is `supersecret`).
+
+After login:
+
+| Go to | What you will see |
+| --- | --- |
+| **Orders** | Incoming storefront checkouts |
+| **Products** | Seed catalog |
+| **Customers** | Retail / Wholesale groups from seed |
+| **Price lists** | Wholesale list (~20% off) |
+| **Settings → Regions** | Europe (EUR), United States (USD) |
+| **Settings → Sales Channels** | Default (B2C) and B2B |
+| **Settings → Developer → Publishable API Keys** | Key written to `CHANNEL_PUBLISHABLE_KEY` for the Next.js storefront |
+
+The shop itself is the **nextstore** service (`APP_URL`, port `8000`) — not `/app`.
 
 ## Environment variables
 
@@ -67,7 +96,7 @@ Admin is at `http://localhost:9000/app`. Copy `.env.template` and set `DATABASE_
 | `MINIO_*` | S3-compatible object storage |
 | `MEILISEARCH_HOST` / `MEILISEARCH_API_KEY` / `MEILISEARCH_PRODUCT_INDEX_NAME` | Product search (in-repo Meilisearch module; empty host skips indexing) |
 
-Publishable API keys created by seed are written to `CHANNEL_PUBLISHABLE_KEY` on deploy and consumed by the Next.js storefront as `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` / `MEDUSA_PUBLISHABLE_KEY`. Deploy **medusa** before **nextstore** on first import (medusa has higher `priority` in import.yaml). If the storefront shows “A valid publishable key is required”, redeploy medusa then nextstore.
+Publishable API keys created by seed are written to `CHANNEL_PUBLISHABLE_KEY` on deploy and consumed by the Next.js storefront as `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` / `MEDUSA_PUBLISHABLE_KEY`. Deploy **medusa** before **nextstore** on first import (medusa has higher `priority` in import.yaml). The storefront start script waits for a resolved `pk_` key; medusa init triggers a nextstore reload after syncing the key so long-lived processes do not keep a stale `${medusa_CHANNEL_PUBLISHABLE_KEY}` literal.
 
 ## Seed data
 
